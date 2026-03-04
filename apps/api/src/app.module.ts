@@ -8,6 +8,10 @@ import { OrganizationsModule } from './modules/organizations/organizations.modul
 import { ProjectsModule } from './modules/projects/projects.module';
 import { TasksModule } from './modules/tasks/tasks.module';
 import { ActivityModule } from './modules/activity/activity.module';
+import { QueuesModule } from './queues/queues.module';
+import { WorkersModule } from './workers/workers.module';
+import { IntegrationsModule } from './modules/integrations/integrations.module';
+import { EventsModule } from './events/events.module';
 
 @Module({
   imports: [
@@ -20,6 +24,10 @@ import { ActivityModule } from './modules/activity/activity.module';
     ProjectsModule,
     TasksModule,
     ActivityModule,
+    QueuesModule,
+    WorkersModule,
+    IntegrationsModule,
+    EventsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
