@@ -11,7 +11,8 @@ import { ActivityModule } from './modules/activity/activity.module';
 import { QueuesModule } from './queues/queues.module';
 import { WorkersModule } from './workers/workers.module';
 import { IntegrationsModule } from './modules/integrations/integrations.module';
-import { EventsModule } from './events/events.module';
+import { EventsModule } from './modules/events/events.module';
+import { RealtimeModule } from './modules/realtime/realtime.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { EventsModule } from './events/events.module';
     WorkersModule,
     IntegrationsModule,
     EventsModule,
+    RealtimeModule,
   ],
   controllers: [AppController],
   providers: [AppService],
