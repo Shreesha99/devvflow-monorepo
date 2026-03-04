@@ -3,16 +3,30 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { io } from "socket.io-client";
+import DashboardHeader from "@/components/dashboard/DashboardHeader";
+import KanbanBoard from "@/components/dashboard/KanbanBoard";
 
 const socket = io("http://localhost:3000");
 
-type Task = {
+export type Activity = {
+  id: string;
+  type: string;
+  payload: {
+    author?: string;
+    message?: string;
+    title?: string;
+    url?: string;
+  };
+};
+
+export type Task = {
   id: number;
   title: string;
   status: "BACKLOG" | "IN_PROGRESS" | "REVIEW" | "DONE";
+  activities?: Activity[];
 };
 
-export default function Dashboard() {
+export default function DashboardPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
 
   useEffect(() => {
@@ -32,37 +46,9 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <div className="p-10 grid grid-cols-4 gap-6">
-      <Column
-        title="BACKLOG"
-        tasks={tasks.filter((t) => t.status === "BACKLOG")}
-      />
-
-      <Column
-        title="IN_PROGRESS"
-        tasks={tasks.filter((t) => t.status === "IN_PROGRESS")}
-      />
-
-      <Column
-        title="REVIEW"
-        tasks={tasks.filter((t) => t.status === "REVIEW")}
-      />
-
-      <Column title="DONE" tasks={tasks.filter((t) => t.status === "DONE")} />
-    </div>
-  );
-}
-
-function Column({ title, tasks }: { title: string; tasks: Task[] }) {
-  return (
-    <div className="bg-gray-100 p-4 rounded-lg">
-      <h2 className="font-bold mb-4">{title}</h2>
-
-      {tasks.map((task) => (
-        <div key={task.id} className="bg-white p-3 mb-3 rounded shadow">
-          {task.title}
-        </div>
-      ))}
+    <div className="bg-gray-50 min-h-screen">
+      <DashboardHeader />
+      <KanbanBoard tasks={tasks} />
     </div>
   );
 }
