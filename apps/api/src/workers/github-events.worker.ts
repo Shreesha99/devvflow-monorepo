@@ -12,7 +12,8 @@ export const githubWorker = new Worker(
   'github-events',
   async (job) => {
     console.log('Worker picked up job:', job.data);
-    const { event, payload } = job.data;
+    const payload = job.data.payload || job.data;
+    const event = job.data.event || 'pull_request';
 
     // Handle push commits
     if (event === 'push') {
@@ -44,7 +45,14 @@ export const githubWorker = new Worker(
         data: { status: 'REVIEW' },
       });
 
-      await prisma.activityEvent.create({
+      console.log('Task moved to REVIEW:', taskId);
+
+      RealtimeGateway.io.emit('task.updated', {
+        taskId,
+        status: 'REVIEW',
+      });
+
+      const activity = await prisma.activityEvent.create({
         data: {
           taskId,
           type: 'pull_request_opened',
@@ -53,6 +61,11 @@ export const githubWorker = new Worker(
             url: payload.pull_request.html_url,
           },
         },
+      });
+
+      RealtimeGateway.io.emit('activity.created', {
+        taskId,
+        activity,
       });
     }
 
@@ -69,7 +82,14 @@ export const githubWorker = new Worker(
         data: { status: 'DONE' },
       });
 
-      await prisma.activityEvent.create({
+      console.log('Task moved to DONE:', taskId);
+
+      RealtimeGateway.io.emit('task.updated', {
+        taskId,
+        status: 'DONE',
+      });
+
+      const activity = await prisma.activityEvent.create({
         data: {
           taskId,
           type: 'pull_request_merged',
@@ -78,6 +98,11 @@ export const githubWorker = new Worker(
             url: payload.pull_request.html_url,
           },
         },
+      });
+
+      RealtimeGateway.io.emit('activity.created', {
+        taskId,
+        activity,
       });
     }
   },

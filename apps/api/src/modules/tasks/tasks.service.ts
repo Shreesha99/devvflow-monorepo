@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
+import { RealtimeGateway } from '../realtime/realtime.gateway';
 
 @Injectable()
 export class TasksService {
@@ -28,9 +29,15 @@ export class TasksService {
     projectId: string;
     assigneeId?: string;
   }) {
-    return this.prisma.task.create({
+    const task = await this.prisma.task.create({
       data,
     });
+
+    console.log('NEW TASK CREATED:', task.id);
+
+    RealtimeGateway.io.emit('task.created', task);
+
+    return task;
   }
 
   async updateStatus(id: number, status: string) {
