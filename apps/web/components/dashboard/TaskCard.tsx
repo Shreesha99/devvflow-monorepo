@@ -17,13 +17,20 @@ export default function TaskCard({ task }: { task: Task }) {
   return (
     <div className="bg-white p-3 mb-3 rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-sm transition">
       {/* Task title */}
-      <div className="text-sm font-medium mb-2 text-gray-800">{task.title}</div>
+      {/* Task header */}
+      <div className="flex items-center gap-2 mb-2">
+        <span className="text-xs font-mono text-gray-500">
+          TASK-{task.number ?? task.id}
+        </span>
+
+        <span className="text-sm font-medium text-gray-800">{task.title}</span>
+      </div>
 
       {/* Activity preview */}
       {activities.length > 0 && (
         <div className="text-xs text-gray-500 space-y-1">
           {preview.map((a) => (
-            <ActivityItem key={a.id} activity={a} />
+            <ActivityItem key={`${a.id}-${a.createdAt}`} activity={a} />
           ))}
 
           {/* Expand button */}

@@ -150,11 +150,14 @@ exports.Prisma.ProjectScalarFieldEnum = {
   organizationId: 'organizationId',
   githubRepoOwner: 'githubRepoOwner',
   githubRepoName: 'githubRepoName',
+  taskPrefix: 'taskPrefix',
+  nextTaskNumber: 'nextTaskNumber',
   createdAt: 'createdAt'
 };
 
 exports.Prisma.TaskScalarFieldEnum = {
   id: 'id',
+  number: 'number',
   projectId: 'projectId',
   title: 'title',
   description: 'description',

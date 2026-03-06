@@ -39,6 +39,10 @@ export class TaskEngineService {
         },
       },
     });
+    RealtimeGateway.io.emit('activity.created', {
+      taskId,
+      activity,
+    });
 
     this.realtime.emitActivity(taskId, activity);
   }

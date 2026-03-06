@@ -22,23 +22,42 @@ export class GithubService {
     }));
   }
 
-  async connectRepo(
-    accessToken: string,
-    projectId: string,
-    owner: string,
-    repo: string,
-  ) {
-    // save mapping
-    await this.prisma.project.update({
-      where: { id: projectId },
-      data: {
+  async connectRepo(accessToken: string, owner: string, repo: string) {
+    // 1. find or create organization using repo owner
+    let organization = await this.prisma.organization.findFirst({
+      where: { name: owner },
+    });
+
+    if (!organization) {
+      organization = await this.prisma.organization.create({
+        data: {
+          name: owner,
+        },
+      });
+    }
+
+    // 2. find project
+    let project = await this.prisma.project.findFirst({
+      where: {
         githubRepoOwner: owner,
         githubRepoName: repo,
       },
     });
+
+    // 3. create project if missing
+    if (!project) {
+      project = await this.prisma.project.create({
+        data: {
+          name: repo,
+          githubRepoOwner: owner,
+          githubRepoName: repo,
+          organizationId: organization.id,
+        },
+      });
+    }
+
     console.log('Webhook URL:', process.env.WEBHOOK_URL);
 
-    // install webhook
     try {
       await axios.post(
         `https://api.github.com/repos/${owner}/${repo}/hooks`,
@@ -59,7 +78,6 @@ export class GithubService {
         },
       );
     } catch (err: any) {
-      // Ignore "hook already exists"
       if (
         err.response?.data?.errors?.[0]?.message ===
         'Hook already exists on this repository'
@@ -70,6 +88,6 @@ export class GithubService {
       }
     }
 
-    return { connected: true };
+    return project;
   }
 }

@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Project" ADD COLUMN     "nextTaskNumber" INTEGER NOT NULL DEFAULT 1,
+ADD COLUMN     "taskPrefix" TEXT NOT NULL DEFAULT 'PRJ';

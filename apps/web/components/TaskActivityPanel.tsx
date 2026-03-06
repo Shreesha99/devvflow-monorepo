@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { io, Socket } from "socket.io-client";
+import { socket } from "@/lib/socket";
 
 type Activity = {
   id: string;
@@ -29,6 +29,7 @@ type Props = {
 export default function TaskActivityPanel({ taskId }: Props) {
   const [activities, setActivities] = useState<Activity[]>([]);
 
+  // Load initial activity
   useEffect(() => {
     axios
       .get<Activity[]>(`http://localhost:3000/activity/task/${taskId}`)
@@ -37,44 +38,46 @@ export default function TaskActivityPanel({ taskId }: Props) {
       });
   }, [taskId]);
 
+  // Listen for realtime updates
   useEffect(() => {
-    const socket: Socket = io("http://localhost:3000");
-
-    socket.on("activity.created", (event: ActivityEvent) => {
+    const handler = (event: ActivityEvent) => {
       if (event.taskId === taskId) {
         setActivities((prev) => [event.activity, ...prev]);
       }
-    });
+    };
+
+    socket.on("activity.created", handler);
 
     return () => {
-      socket.disconnect();
+      socket.off("activity.created", handler);
     };
   }, [taskId]);
 
   return (
-    <div style={{ border: "1px solid #ddd", padding: 16 }}>
-      <h3>Activity</h3>
+    <div className="border rounded-lg p-4">
+      <h3 className="font-semibold mb-3">Activity</h3>
 
-      {activities.length === 0 && <p>No activity yet</p>}
+      {activities.length === 0 && (
+        <p className="text-sm text-gray-500">No activity yet</p>
+      )}
 
       {activities.map((a) => (
-        <div
-          key={a.id}
-          style={{
-            borderBottom: "1px solid #eee",
-            padding: "8px 0",
-          }}
-        >
-          <strong>{a.type}</strong>
+        <div key={a.id} className="border-b py-2 text-sm">
+          <strong className="text-gray-700">{a.type}</strong>
 
-          <div style={{ fontSize: 12 }}>
+          <div className="text-xs text-gray-500 mt-1">
             {a.payload.message && <div>Message: {a.payload.message}</div>}
             {a.payload.author && <div>Author: {a.payload.author}</div>}
             {a.payload.title && <div>Title: {a.payload.title}</div>}
+
             {a.payload.url && (
               <div>
                 URL:{" "}
-                <a href={a.payload.url} target="_blank">
+                <a
+                  href={a.payload.url}
+                  target="_blank"
+                  className="text-blue-500"
+                >
                   {a.payload.url}
                 </a>
               </div>

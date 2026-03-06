@@ -20,6 +20,13 @@ export class TasksService {
       where: {
         projectId,
       },
+      include: {
+        activities: {
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
+      },
     });
   }
 
@@ -29,11 +36,33 @@ export class TasksService {
     projectId: string;
     assigneeId?: string;
   }) {
-    const task = await this.prisma.task.create({
-      data,
+    const result = await this.prisma.task.aggregate({
+      where: {
+        projectId: data.projectId,
+      },
+      _max: {
+        number: true,
+      },
     });
 
-    console.log('NEW TASK CREATED:', task.id);
+    const nextNumber = (result._max.number ?? 0) + 1;
+
+    console.log(
+      'Creating task for project:',
+      data.projectId,
+      'next:',
+      nextNumber,
+    );
+
+    const task = await this.prisma.task.create({
+      data: {
+        ...data,
+        number: nextNumber,
+      },
+      include: {
+        activities: true,
+      },
+    });
 
     RealtimeGateway.io.emit('task.created', task);
 
@@ -41,9 +70,16 @@ export class TasksService {
   }
 
   async updateStatus(id: number, status: string) {
-    return this.prisma.task.update({
+    const task = await this.prisma.task.update({
       where: { id },
       data: { status: status as any },
     });
+
+    RealtimeGateway.io.emit('task.updated', {
+      taskId: task.id,
+      status: task.status,
+    });
+
+    return task;
   }
 }

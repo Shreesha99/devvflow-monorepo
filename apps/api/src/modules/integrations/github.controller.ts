@@ -31,18 +31,12 @@ export class GithubController {
     @Headers('authorization') auth: string,
     @Body()
     body: {
-      projectId: string;
       owner: string;
       repo: string;
     },
   ) {
     const token = auth.replace('Bearer ', '');
 
-    return this.githubService.connectRepo(
-      token,
-      body.projectId,
-      body.owner,
-      body.repo,
-    );
+    return this.githubService.connectRepo(token, body.owner, body.repo);
   }
 }
