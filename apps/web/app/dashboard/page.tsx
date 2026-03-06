@@ -11,6 +11,7 @@ const socket = io("http://localhost:3000");
 export type Activity = {
   id: string;
   type: string;
+  createdAt: string;
   payload: {
     author?: string;
     message?: string;
