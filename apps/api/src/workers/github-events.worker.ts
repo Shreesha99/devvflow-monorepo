@@ -1,5 +1,5 @@
 import { Worker } from 'bullmq';
-import { extractTaskId } from '../utils/commit-parser';
+import { extractTaskNumber } from '../utils/commit-parser';
 import { TaskEngineService } from '../modules/events/task-engine.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { RealtimeGateway } from '../modules/realtime/realtime.gateway';
@@ -14,7 +14,24 @@ export const githubWorker = new Worker(
     console.log('Worker picked up job:', job.data);
     const payload = job.data.payload || job.data;
     const event = job.data.event || 'pull_request';
-    const projectId = job.data.projectId;
+    const owner = payload.repository?.owner?.login;
+    const repo = payload.repository?.name;
+
+    const project = await prisma.project.findFirst({
+      where: {
+        githubRepoOwner: owner,
+        githubRepoName: repo,
+      },
+    });
+
+    if (!project) {
+      console.log('No project found for repo:', owner, repo);
+      return;
+    }
+
+    const projectId = project.id;
+
+    console.log('Resolved projectId:', projectId);
 
     console.log('Worker projectId:', projectId);
 
@@ -25,7 +42,7 @@ export const githubWorker = new Worker(
       for (const commit of commits) {
         console.log('Processing commit:', commit.message);
 
-        const taskId = extractTaskId(commit.message);
+        const taskId = extractTaskNumber(commit.message);
 
         console.log('Extracted taskId:', taskId);
 
@@ -38,18 +55,26 @@ export const githubWorker = new Worker(
     // Handle pull request opened
     if (event === 'pull_request' && payload.action === 'opened') {
       const title = payload.pull_request.title;
-      const taskId = extractTaskId(title);
+      const taskId = extractTaskNumber(title);
 
       if (!taskId) return;
+      const task = await prisma.task.findFirst({
+        where: {
+          projectId,
+          number: taskId,
+        },
+      });
+
+      if (!task) return;
 
       await prisma.task.update({
-        where: { id: taskId },
+        where: { id: task.id },
         data: { status: 'REVIEW' },
       });
 
-      await prisma.activityEvent.create({
+      const activity = await prisma.activityEvent.create({
         data: {
-          taskId,
+          taskId: task.id,
           type: 'pull_request_opened',
           payload: {
             title,
@@ -58,7 +83,12 @@ export const githubWorker = new Worker(
         },
       });
 
-      realtime.emitTaskUpdate(taskId, 'REVIEW');
+      realtime.emitTaskUpdate(task.id, 'REVIEW');
+
+      RealtimeGateway.io.emit('activity.created', {
+        taskId: task.id,
+        activity,
+      });
     }
 
     // Handle pull request merged
@@ -68,18 +98,27 @@ export const githubWorker = new Worker(
       payload.pull_request.merged === true
     ) {
       const title = payload.pull_request.title;
-      const taskId = extractTaskId(title);
+      const taskId = extractTaskNumber(title);
 
       if (!taskId) return;
 
+      const task = await prisma.task.findFirst({
+        where: {
+          projectId,
+          number: taskId,
+        },
+      });
+
+      if (!task) return;
+
       await prisma.task.update({
-        where: { id: taskId },
+        where: { id: task.id },
         data: { status: 'DONE' },
       });
 
-      await prisma.activityEvent.create({
+      const activity = await prisma.activityEvent.create({
         data: {
-          taskId,
+          taskId: task.id,
           type: 'pull_request_merged',
           payload: {
             title,
@@ -88,7 +127,12 @@ export const githubWorker = new Worker(
         },
       });
 
-      realtime.emitTaskUpdate(taskId, 'DONE');
+      realtime.emitTaskUpdate(task.id, 'DONE');
+
+      RealtimeGateway.io.emit('activity.created', {
+        taskId: task.id,
+        activity,
+      });
     }
   },
   {

@@ -10,10 +10,10 @@ export class TaskEngineService {
   ) {}
 
   async handleCommit(taskId: number, commit: any, projectId: string) {
-    const task = await this.prisma.task.findUnique({
+    const task = await this.prisma.task.findFirst({
       where: {
-        id: taskId,
         projectId: projectId,
+        number: taskId,
       },
     });
 
@@ -22,16 +22,16 @@ export class TaskEngineService {
     // Only move to IN_PROGRESS if still BACKLOG
     if (task.status === 'BACKLOG') {
       await this.prisma.task.update({
-        where: { id: taskId },
+        where: { id: task.id },
         data: { status: 'IN_PROGRESS' },
       });
 
-      this.realtime.emitTaskUpdate(taskId, 'IN_PROGRESS');
+      this.realtime.emitTaskUpdate(task.id, 'IN_PROGRESS');
     }
 
     const activity = await this.prisma.activityEvent.create({
       data: {
-        taskId,
+        taskId: task.id,
         type: 'commit_pushed',
         payload: {
           message: commit.message,
@@ -40,10 +40,9 @@ export class TaskEngineService {
       },
     });
     RealtimeGateway.io.emit('activity.created', {
-      taskId,
+      taskId: task.id,
       activity,
     });
-
-    this.realtime.emitActivity(taskId, activity);
+    this.realtime.emitActivity(task.id, activity);
   }
 }
