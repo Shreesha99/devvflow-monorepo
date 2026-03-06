@@ -22,9 +22,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <body
@@ -32,22 +32,19 @@ export default function RootLayout({
       >
         <TooltipProvider>
           {children}
-          <body>
-            {children}
 
-            <Toaster
-              position="bottom-center"
-              toastOptions={{
-                duration: 4000,
-                style: {
-                  background: "#111",
-                  color: "#fff",
-                  borderRadius: "10px",
-                  fontSize: "14px",
-                },
-              }}
-            />
-          </body>
+          <Toaster
+            position="bottom-center"
+            toastOptions={{
+              duration: 4000,
+              style: {
+                background: "#111",
+                color: "#fff",
+                borderRadius: "10px",
+                fontSize: "14px",
+              },
+            }}
+          />
         </TooltipProvider>
       </body>
     </html>
