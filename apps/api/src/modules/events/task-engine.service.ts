@@ -9,9 +9,12 @@ export class TaskEngineService {
     private realtime: RealtimeGateway,
   ) {}
 
-  async handleCommit(taskId: number, commit: any) {
+  async handleCommit(taskId: number, commit: any, projectId: string) {
     const task = await this.prisma.task.findUnique({
-      where: { id: taskId },
+      where: {
+        id: taskId,
+        projectId: projectId,
+      },
     });
 
     if (!task) return;

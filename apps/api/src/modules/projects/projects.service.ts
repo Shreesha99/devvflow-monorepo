@@ -27,4 +27,14 @@ export class ProjectsService {
       data,
     });
   }
+
+  async connectGithubRepo(projectId: string, owner: string, repo: string) {
+    return this.prisma.project.update({
+      where: { id: projectId },
+      data: {
+        githubRepoOwner: owner,
+        githubRepoName: repo,
+      },
+    });
+  }
 }

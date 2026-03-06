@@ -14,6 +14,9 @@ export const githubWorker = new Worker(
     console.log('Worker picked up job:', job.data);
     const payload = job.data.payload || job.data;
     const event = job.data.event || 'pull_request';
+    const projectId = job.data.projectId;
+
+    console.log('Worker projectId:', projectId);
 
     // Handle push commits
     if (event === 'push') {
@@ -28,7 +31,7 @@ export const githubWorker = new Worker(
 
         if (!taskId) continue;
 
-        await taskEngine.handleCommit(taskId, commit);
+        await taskEngine.handleCommit(taskId, commit, projectId);
       }
     }
 

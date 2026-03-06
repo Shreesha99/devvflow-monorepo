@@ -26,7 +26,28 @@ export class GithubWebhookController {
 
     this.logger.log(`Received GitHub event: ${event}`);
 
-    await this.githubService.processEvent(event, payload, signature);
+    const repoFullName = payload.repository?.full_name;
+
+    if (!repoFullName) {
+      this.logger.warn('Webhook ignored: no repository info');
+      return { ignored: true };
+    }
+
+    const [owner, repo] = repoFullName.split('/');
+
+    const project = await this.githubService.findProjectByRepo(owner, repo);
+
+    if (!project) {
+      this.logger.warn(`Webhook ignored: repo ${owner}/${repo} not linked`);
+      return { ignored: true };
+    }
+
+    await this.githubService.processEvent(
+      event,
+      payload,
+      signature,
+      project.id,
+    );
 
     return { received: true };
   }

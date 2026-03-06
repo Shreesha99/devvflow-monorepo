@@ -3,13 +3,9 @@ generator client {
   output   = "../generated/client"
 }
 
-// datasource db {
-//  provider = "postgresql"
-//  url      = env("DATABASE_URL")
-// }
-
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -50,6 +46,9 @@ model Project {
 
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
+
+  githubRepoOwner String?
+  githubRepoName  String?
 
   tasks Task[]
 

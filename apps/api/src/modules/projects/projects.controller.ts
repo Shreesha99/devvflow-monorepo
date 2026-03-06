@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 
 @Controller('projects')
@@ -18,5 +18,12 @@ export class ProjectsController {
   @Post()
   async createProject(@Body() body: { name: string; organizationId: string }) {
     return this.projectService.create(body);
+  }
+  @Patch(':id/connect-github')
+  connectGithub(
+    @Param('id') id: string,
+    @Body() body: { owner: string; repo: string },
+  ) {
+    return this.projectService.connectGithubRepo(id, body.owner, body.repo);
   }
 }

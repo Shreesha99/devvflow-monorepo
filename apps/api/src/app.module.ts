@@ -13,6 +13,7 @@ import { WorkersModule } from './workers/workers.module';
 import { IntegrationsModule } from './modules/integrations/integrations.module';
 import { EventsModule } from './modules/events/events.module';
 import { RealtimeModule } from './modules/realtime/realtime.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { RealtimeModule } from './modules/realtime/realtime.module';
     IntegrationsModule,
     EventsModule,
     RealtimeModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
