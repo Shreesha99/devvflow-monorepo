@@ -11,7 +11,14 @@ export async function getRepos() {
     },
   });
 
-  return res.data;
+  return res.data.map((repo: any) => ({
+    ...repo,
+    owner: repo.owner ?? {
+      login: repo.fullName?.split("/")[0] ?? "unknown",
+      avatar_url: "",
+      type: "User",
+    },
+  }));
 }
 
 export async function connectRepo(owner: string, repo: string) {

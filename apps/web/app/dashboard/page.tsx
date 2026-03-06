@@ -8,6 +8,8 @@ import KanbanBoard from "@/components/dashboard/KanbanBoard";
 import GithubConnectButton from "@/components/github/GithubConnectButton";
 import RepoSelector from "@/components/github/RepoSelector";
 import CreateTaskModal from "@/components/tasks/CreateTaskModal";
+import KanbanBoardSkeleton from "@/components/skeleton/KanbanBoardSkeleton";
+import Sidebar from "@/components/layout/Sidebar";
 
 const socket = io("http://localhost:3000", {
   transports: ["websocket"],
@@ -40,6 +42,11 @@ export default function DashboardPage() {
   const [currentRepo, setCurrentRepo] = useState<string | null>(null);
   const [currentProjectId, setCurrentProjectId] = useState<string | null>(null);
   const [showCreateTask, setShowCreateTask] = useState(false);
+  const [loadingTasks, setLoadingTasks] = useState(true);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [view, setView] = useState<"kanban" | "activity" | "settings">(
+    "kanban"
+  );
 
   useEffect(() => {
     const repo = localStorage.getItem("connected_repo");
@@ -79,9 +86,23 @@ export default function DashboardPage() {
   useEffect(() => {
     if (!currentProjectId) return;
 
-    axios
-      .get(`http://localhost:3000/tasks/project/${currentProjectId}`)
-      .then((res) => setTasks(res.data));
+    const fetchTasks = async () => {
+      try {
+        setLoadingTasks(true);
+
+        const res = await axios.get(
+          `http://localhost:3000/tasks/project/${currentProjectId}`
+        );
+
+        setTasks(res.data);
+      } catch (err) {
+        console.error("Failed to load tasks", err);
+      } finally {
+        setLoadingTasks(false);
+      }
+    };
+
+    fetchTasks();
   }, [currentProjectId]);
 
   useEffect(() => {
@@ -152,13 +173,10 @@ export default function DashboardPage() {
     <div className="bg-gray-50 min-h-screen">
       <DashboardHeader
         repo={currentRepo || undefined}
-        onChangeRepo={() => {
-          localStorage.removeItem("connected_repo");
-          localStorage.removeItem("connected_project");
-
-          setRepoConnected(false);
-          setCurrentRepo(null);
-          setCurrentProjectId(null);
+        githubConnected={githubConnected}
+        onRepoChange={(projectId, repoFullName) => {
+          setCurrentProjectId(projectId);
+          setCurrentRepo(repoFullName);
         }}
         onLogoutGithub={() => {
           localStorage.removeItem("github_token");
@@ -167,38 +185,91 @@ export default function DashboardPage() {
         }}
       />
 
-      <div className="p-8 space-y-6">
-        {!githubConnected && <GithubConnectButton />}
-
-        {githubConnected && !repoConnected && (
-          <RepoSelector
-            onConnected={(projectId, repoFullName) => {
-              setCurrentProjectId(projectId);
-              setCurrentRepo(repoFullName);
-              setRepoConnected(true);
-            }}
-          />
-        )}
-
+      <div className="flex">
         {repoConnected && (
-          <div className="flex justify-end">
-            <button
-              onClick={() => setShowCreateTask(true)}
-              className="px-4 py-2 bg-black text-white rounded-md text-sm"
-            >
-              + New Task
-            </button>
-          </div>
-        )}
-
-        {repoConnected && <KanbanBoard tasks={tasks} />}
-
-        {showCreateTask && currentProjectId && (
-          <CreateTaskModal
-            projectId={currentProjectId}
-            onClose={() => setShowCreateTask(false)}
+          <Sidebar
+            collapsed={sidebarCollapsed}
+            toggle={() => setSidebarCollapsed(!sidebarCollapsed)}
+            active={view}
+            onNavigate={setView}
           />
         )}
+
+        <div className="flex-1 p-8">
+          {!githubConnected && (
+            <div className="flex items-center justify-center h-[70vh]">
+              <GithubConnectButton />
+            </div>
+          )}
+
+          {githubConnected && !repoConnected && (
+            <div className="flex items-center justify-center h-[70vh]">
+              <RepoSelector
+                onConnected={(projectId, repoFullName) => {
+                  setCurrentProjectId(projectId);
+                  setCurrentRepo(repoFullName);
+                  setRepoConnected(true);
+                }}
+              />
+            </div>
+          )}
+
+          {repoConnected && view === "kanban" && (
+            <div className="flex items-center justify-between px-4">
+              <h2 className="text-lg font-semibold text-gray-900">
+                {currentRepo}
+              </h2>
+              <button
+                onClick={() => setShowCreateTask(true)}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-black text-white text-sm font-medium hover:bg-neutral-800 transition-colors"
+              >
+                <span className="text-lg leading-none">+</span>
+                New Task
+              </button>
+            </div>
+          )}
+
+          {repoConnected && view === "kanban" && (
+            <div className="relative">
+              <div
+                className={`transition-opacity duration-300 ${
+                  loadingTasks
+                    ? "opacity-100"
+                    : "opacity-0 pointer-events-none absolute inset-0"
+                }`}
+              >
+                <KanbanBoardSkeleton />
+              </div>
+
+              <div
+                className={`transition-opacity duration-300 ${
+                  loadingTasks ? "opacity-0" : "opacity-100"
+                }`}
+              >
+                <KanbanBoard tasks={tasks} />
+              </div>
+            </div>
+          )}
+
+          {repoConnected && view === "activity" && (
+            <div className="text-sm text-gray-500">
+              Activity view coming soon
+            </div>
+          )}
+
+          {repoConnected && view === "settings" && (
+            <div className="text-sm text-gray-500">
+              Settings view coming soon
+            </div>
+          )}
+
+          {showCreateTask && currentProjectId && (
+            <CreateTaskModal
+              projectId={currentProjectId}
+              onClose={() => setShowCreateTask(false)}
+            />
+          )}
+        </div>
       </div>
     </div>
   );

@@ -1,42 +1,34 @@
 "use client";
 
-import { LayoutDashboard, Github, ChevronDown } from "lucide-react";
+import { LayoutDashboard, Github } from "lucide-react";
+import RepoDropdown from "@/components/github/RepoDropdown";
+import GithubAccountMenu from "../github/GithubAccountMenu";
 
 export default function DashboardHeader({
   repo,
-  onChangeRepo,
+  githubConnected,
+  onRepoChange,
   onLogoutGithub,
 }: {
   repo?: string;
-  onChangeRepo: () => void;
+  githubConnected: boolean;
+  onRepoChange: (projectId: string, repoFullName: string) => void;
   onLogoutGithub: () => void;
 }) {
   return (
-    <div className="border-b bg-white px-10 py-4 flex items-center justify-between">
-      <div className="flex items-center gap-2 font-semibold text-lg">
-        <LayoutDashboard size={20} />
-        DevFlow
-      </div>
+    <div className="border-b bg-white px-8 py-3 flex items-center justify-between">
+      <div className="flex items-center gap-6">
+        <div className="flex items-center gap-2 font-semibold text-lg">
+          <LayoutDashboard size={18} />
+          DevFlow
+        </div>
 
-      <div className="flex items-center gap-4">
         {repo && (
-          <button
-            onClick={onChangeRepo}
-            className="flex items-center gap-2 px-3 py-1 border rounded-md hover:bg-gray-100"
-          >
-            {repo}
-            <ChevronDown size={14} />
-          </button>
+          <RepoDropdown currentRepo={repo} onRepoChange={onRepoChange} />
         )}
-
-        <button
-          onClick={onLogoutGithub}
-          className="flex items-center gap-2 text-sm text-gray-600 hover:text-black"
-        >
-          <Github size={16} />
-          Switch GitHub
-        </button>
       </div>
+
+      {githubConnected && <GithubAccountMenu onLogout={onLogoutGithub} />}
     </div>
   );
 }
