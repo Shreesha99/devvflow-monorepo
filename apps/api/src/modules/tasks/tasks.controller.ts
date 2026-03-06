@@ -1,5 +1,6 @@
 import { Controller, Get, Post, Patch, Body, Param } from '@nestjs/common';
 import { TasksService } from './tasks.service';
+import { TaskStatus } from '../../../../../packages/database/generated/client';
 
 @Controller('tasks')
 export class TasksController {
@@ -31,7 +32,7 @@ export class TasksController {
   @Patch(':id/status')
   async updateStatus(
     @Param('id') id: string,
-    @Body() body: { status: string },
+    @Body() body: { status: TaskStatus },
   ) {
     return this.tasksService.updateStatus(Number(id), body.status);
   }

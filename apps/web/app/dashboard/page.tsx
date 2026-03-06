@@ -11,7 +11,7 @@ import CreateTaskModal from "@/components/tasks/CreateTaskModal";
 import KanbanBoardSkeleton from "@/components/skeleton/KanbanBoardSkeleton";
 import Sidebar from "@/components/layout/Sidebar";
 
-const socket = io("http://localhost:3000", {
+const socket = io(process.env.NEXT_PUBLIC_API_URL!, {
   transports: ["websocket"],
 });
 
@@ -91,7 +91,7 @@ export default function DashboardPage() {
         setLoadingTasks(true);
 
         const res = await axios.get(
-          `http://localhost:3000/tasks/project/${currentProjectId}`
+          `${process.env.NEXT_PUBLIC_API_URL}/tasks/project/${currentProjectId}`
         );
 
         setTasks(res.data);
@@ -109,7 +109,7 @@ export default function DashboardPage() {
     const handleTaskCreated = (task: any) => {
       // only add tasks belonging to the current project
       if (task.projectId === currentProjectId) {
-        setTasks((prev) => [task, ...prev]);
+        setTasks((prev) => [...prev, task]);
       }
     };
 

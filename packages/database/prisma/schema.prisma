@@ -67,6 +67,7 @@ model Task {
   description String?
 
   status TaskStatus @default(BACKLOG)
+  position Int @default(0)
 
   assigneeId String?
 

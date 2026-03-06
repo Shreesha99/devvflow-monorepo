@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { RealtimeGateway } from '../realtime/realtime.gateway';
+import { TaskStatus } from '../../../../../packages/database/generated/client';
 
 @Injectable()
 export class TasksService {
@@ -19,6 +20,9 @@ export class TasksService {
     return this.prisma.task.findMany({
       where: {
         projectId,
+      },
+      orderBy: {
+        createdAt: 'asc',
       },
       include: {
         activities: {
@@ -69,10 +73,10 @@ export class TasksService {
     return task;
   }
 
-  async updateStatus(id: number, status: string) {
+  async updateStatus(id: number, status: TaskStatus) {
     const task = await this.prisma.task.update({
       where: { id },
-      data: { status: status as any },
+      data: { status },
     });
 
     RealtimeGateway.io.emit('task.updated', {

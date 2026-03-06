@@ -162,6 +162,7 @@ exports.Prisma.TaskScalarFieldEnum = {
   title: 'title',
   description: 'description',
   status: 'status',
+  position: 'position',
   assigneeId: 'assigneeId',
   createdAt: 'createdAt'
 };
