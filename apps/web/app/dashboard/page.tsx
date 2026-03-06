@@ -40,6 +40,19 @@ export default function DashboardPage() {
       );
     });
 
+    socket.on("activity.created", (data) => {
+      setTasks((prev) =>
+        prev.map((task) =>
+          task.id === data.taskId
+            ? {
+                ...task,
+                activities: [...(task.activities || []), data.activity],
+              }
+            : task
+        )
+      );
+    });
+
     socket.on("task.created", (task) => {
       setTasks((prev) => [...prev, task]);
     });

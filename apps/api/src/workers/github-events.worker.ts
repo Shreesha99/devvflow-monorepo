@@ -35,7 +35,6 @@ export const githubWorker = new Worker(
     // Handle pull request opened
     if (event === 'pull_request' && payload.action === 'opened') {
       const title = payload.pull_request.title;
-
       const taskId = extractTaskId(title);
 
       if (!taskId) return;
@@ -45,14 +44,7 @@ export const githubWorker = new Worker(
         data: { status: 'REVIEW' },
       });
 
-      console.log('Task moved to REVIEW:', taskId);
-
-      RealtimeGateway.io.emit('task.updated', {
-        taskId,
-        status: 'REVIEW',
-      });
-
-      const activity = await prisma.activityEvent.create({
+      await prisma.activityEvent.create({
         data: {
           taskId,
           type: 'pull_request_opened',
@@ -63,16 +55,16 @@ export const githubWorker = new Worker(
         },
       });
 
-      RealtimeGateway.io.emit('activity.created', {
-        taskId,
-        activity,
-      });
+      realtime.emitTaskUpdate(taskId, 'REVIEW');
     }
 
     // Handle pull request merged
-    if (event === 'pull_request' && payload.pull_request.merged === true) {
+    if (
+      event === 'pull_request' &&
+      payload.action === 'closed' &&
+      payload.pull_request.merged === true
+    ) {
       const title = payload.pull_request.title;
-
       const taskId = extractTaskId(title);
 
       if (!taskId) return;
@@ -82,14 +74,7 @@ export const githubWorker = new Worker(
         data: { status: 'DONE' },
       });
 
-      console.log('Task moved to DONE:', taskId);
-
-      RealtimeGateway.io.emit('task.updated', {
-        taskId,
-        status: 'DONE',
-      });
-
-      const activity = await prisma.activityEvent.create({
+      await prisma.activityEvent.create({
         data: {
           taskId,
           type: 'pull_request_merged',
@@ -100,10 +85,7 @@ export const githubWorker = new Worker(
         },
       });
 
-      RealtimeGateway.io.emit('activity.created', {
-        taskId,
-        activity,
-      });
+      realtime.emitTaskUpdate(taskId, 'DONE');
     }
   },
   {

@@ -10,20 +10,22 @@ export class TaskEngineService {
   ) {}
 
   async handleCommit(taskId: number, commit: any) {
-    // update task status
-    await this.prisma.task.update({
+    const task = await this.prisma.task.findUnique({
       where: { id: taskId },
-      data: {
-        status: 'IN_PROGRESS',
-      },
     });
 
-    console.log('Emitting websocket event for task:', taskId);
+    if (!task) return;
 
-    // emit websocket event
-    this.realtime.emitTaskUpdate(taskId, 'IN_PROGRESS');
+    // Only move to IN_PROGRESS if still BACKLOG
+    if (task.status === 'BACKLOG') {
+      await this.prisma.task.update({
+        where: { id: taskId },
+        data: { status: 'IN_PROGRESS' },
+      });
 
-    // create activity event
+      this.realtime.emitTaskUpdate(taskId, 'IN_PROGRESS');
+    }
+
     const activity = await this.prisma.activityEvent.create({
       data: {
         taskId,
@@ -35,7 +37,6 @@ export class TaskEngineService {
       },
     });
 
-    // emit activity realtime
     this.realtime.emitActivity(taskId, activity);
   }
 }
