@@ -29,16 +29,23 @@ export class TaskEngineService {
       this.realtime.emitTaskUpdate(task.id, 'IN_PROGRESS');
     }
 
+    if (commit.message.startsWith('Merge pull request')) {
+      return;
+    }
+
+    let activityType = 'commit_pushed';
+
     const activity = await this.prisma.activityEvent.create({
       data: {
         taskId: task.id,
-        type: 'commit_pushed',
+        type: activityType,
         payload: {
           message: commit.message,
           author: commit.author?.name,
         },
       },
     });
+
     RealtimeGateway.io.emit('activity.created', {
       taskId: task.id,
       activity,

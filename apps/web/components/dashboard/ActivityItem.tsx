@@ -3,10 +3,27 @@ import { Activity } from "@/app/dashboard/page";
 
 export default function ActivityItem({ activity }: { activity: Activity }) {
   if (activity.type === "commit_pushed") {
+    const message = activity.payload?.message || "";
+    const author = activity.payload?.author;
+
+    const isMergeCommit =
+      message.startsWith("Merge pull request") ||
+      message.startsWith("Merged PR") ||
+      message.includes("pull request");
+
+    if (isMergeCommit) {
+      return (
+        <div className="flex items-center gap-2">
+          <GitMerge size={14} className="text-purple-500" />
+          merge commit by <b>{author}</b>
+        </div>
+      );
+    }
+
     return (
       <div className="flex items-center gap-2">
         <GitCommit size={14} className="text-gray-400" />
-        commit by <b>{activity.payload.author}</b>
+        commit by <b>{author}</b>
       </div>
     );
   }
@@ -21,6 +38,18 @@ export default function ActivityItem({ activity }: { activity: Activity }) {
   }
 
   if (activity.type === "pull_request_merged") {
+    const message = activity.payload?.message || "";
+    const author = activity.payload?.author;
+
+    if (message.startsWith("Merge pull request")) {
+      return (
+        <div className="flex items-center gap-2">
+          <GitCommit size={14} className="text-gray-400" />
+          merge commit by <b>{author}</b>
+        </div>
+      );
+    }
+
     return (
       <div className="flex items-center gap-2">
         <GitMerge size={14} className="text-green-500" />
