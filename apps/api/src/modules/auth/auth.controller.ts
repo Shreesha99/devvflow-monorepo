@@ -20,7 +20,6 @@ export class AuthController {
 
     const encryptedToken = encrypt(user.accessToken);
 
-    // TEMP: get first organization
     const org = await this.prisma.organization.findFirst();
 
     if (org) {
@@ -46,8 +45,14 @@ export class AuthController {
       });
     }
 
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3001';
-    const redirectUrl = `${frontendUrl}/dashboard?token=${user.accessToken}`;
+    // Detect frontend automatically
+    const referer = req.headers.referer;
+    const origin = referer
+      ? new URL(referer).origin
+      : process.env.FRONTEND_URL || 'http://localhost:3001';
+
+    const redirectUrl = `${origin}/dashboard?token=${user.accessToken}`;
+
     return res.redirect(redirectUrl);
   }
 }
