@@ -12,6 +12,7 @@ export class TaskEngineService {
 
   async handleCommit(taskNumber: number, commit: any, projectId: string) {
     const match = commit.message.match(/TASK-(\d+)/);
+    console.log('FILES RECEIVED:', commit.files);
 
     if (match) {
       taskNumber = Number(match[1]);
@@ -42,23 +43,7 @@ export class TaskEngineService {
     const repoOwner = task.project.githubRepoOwner;
     const repoName = task.project.githubRepoName;
 
-    let files = [];
-
-    try {
-      const res = await axios.get(
-        `https://api.github.com/repos/${repoOwner}/${repoName}/commits/${commit.id}`,
-      );
-
-      files =
-        res.data.files?.map((f: any) => ({
-          path: f.filename,
-          additions: f.additions,
-          deletions: f.deletions,
-          patch: f.patch || null,
-        })) || [];
-    } catch (err) {
-      console.log('Failed to fetch commit files');
-    }
+    let files = commit.files || [];
 
     const activity = await this.prisma.activityEvent.create({
       data: {

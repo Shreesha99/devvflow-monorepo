@@ -9,7 +9,7 @@ import {
 import type { Request } from 'express';
 import { GithubWebhookService } from './github.webhook.service';
 
-@Controller('webhooks/github')
+@Controller('webhooks/github/test')
 export class GithubWebhookController {
   private readonly logger = new Logger(GithubWebhookController.name);
 

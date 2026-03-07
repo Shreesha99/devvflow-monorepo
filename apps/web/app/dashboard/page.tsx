@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { io } from "socket.io-client";
-import DashboardHeader from "@/components/dashboard/TaskHeader";
+import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import KanbanBoard from "@/components/dashboard/KanbanBoard";
 import GithubConnectButton from "@/components/github/GithubConnectButton";
 import RepoSelector from "@/components/github/RepoSelector";
@@ -53,6 +53,11 @@ export default function DashboardPage() {
   useEffect(() => {
     const repo = localStorage.getItem("connected_repo");
     const projectId = localStorage.getItem("connected_project");
+    const token = localStorage.getItem("github_token");
+
+    if (token) {
+      setGithubConnected(true);
+    }
 
     if (repo && projectId) {
       setCurrentRepo(repo);
@@ -63,16 +68,13 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
+
     const token = params.get("token");
     const repo = localStorage.getItem("connected_repo");
-
-    if (repo) {
-      setRepoConnected(true);
-    }
+    const projectId = localStorage.getItem("connected_project");
 
     if (token) {
       localStorage.setItem("github_token", token);
-
       setGithubConnected(true);
 
       window.history.replaceState({}, "", "/dashboard");
@@ -82,6 +84,12 @@ export default function DashboardPage() {
 
     if (storedToken) {
       setGithubConnected(true);
+    }
+
+    if (repo && projectId) {
+      setRepoConnected(true);
+      setCurrentRepo(repo);
+      setCurrentProjectId(projectId);
     }
   }, []);
 

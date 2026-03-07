@@ -8870,13 +8870,14 @@ export namespace Prisma {
 
   export type IntegrationWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    organizationId_type?: IntegrationOrganizationIdTypeCompoundUniqueInput
     AND?: IntegrationWhereInput | IntegrationWhereInput[]
     OR?: IntegrationWhereInput[]
     NOT?: IntegrationWhereInput | IntegrationWhereInput[]
     organizationId?: StringFilter<"Integration"> | string
     type?: StringFilter<"Integration"> | string
     config?: JsonFilter<"Integration">
-  }, "id">
+  }, "id" | "organizationId_type">
 
   export type IntegrationOrderByWithAggregationInput = {
     id?: SortOrder
@@ -9814,6 +9815,11 @@ export namespace Prisma {
     gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type IntegrationOrganizationIdTypeCompoundUniqueInput = {
+    organizationId: string
+    type: string
   }
 
   export type IntegrationCountOrderByAggregateInput = {

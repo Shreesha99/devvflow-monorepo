@@ -234,20 +234,7 @@ function CommitItem({ commit }: { commit: any }) {
       {open && files.length > 0 && (
         <div className="border-t bg-gray-50 text-xs font-mono">
           {files.map((file: any, i: number) => (
-            <div
-              key={i}
-              className="flex justify-between px-3 py-2 border-b last:border-none"
-            >
-              <FileChange key={i} file={file} />
-              <span>{file.path || file}</span>
-
-              {file.additions !== undefined && (
-                <span>
-                  <span className="text-green-600">+{file.additions}</span>{" "}
-                  <span className="text-red-500">-{file.deletions}</span>
-                </span>
-              )}
-            </div>
+            <FileChange key={i} file={file} />
           ))}
         </div>
       )}

@@ -3,6 +3,8 @@ import { extractTaskNumber } from '../utils/commit-parser';
 import { TaskEngineService } from '../modules/events/task-engine.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { RealtimeGateway } from '../modules/realtime/realtime.gateway';
+import axios from 'axios';
+import { decrypt } from 'src/utils/crypto';
 
 const prisma = new PrismaService();
 const realtime = new RealtimeGateway();
@@ -13,6 +15,7 @@ export const githubWorker = new Worker(
   async (job) => {
     console.log('Worker picked up job:', job.data);
     const payload = job.data.payload || job.data;
+    console.log('Worker payload keys:', Object.keys(payload || {}));
     const event = job.data.event || 'pull_request';
     const owner = payload.repository?.owner?.login;
     const repo = payload.repository?.name;
@@ -48,7 +51,53 @@ export const githubWorker = new Worker(
 
         if (!taskId) continue;
 
-        await taskEngine.handleCommit(taskId, commit, projectId);
+        let files: any[] = [];
+
+        try {
+          const integration = await prisma.integration.findFirst({
+            where: {
+              type: 'github',
+            },
+          });
+
+          if (!integration) {
+            console.log('No GitHub integration found');
+            return;
+          }
+          if (!integration.config) {
+            console.log('Integration config missing');
+            return;
+          }
+
+          const token = decrypt((integration.config as any).accessToken);
+
+          const commitDetails = await axios.get(
+            `https://api.github.com/repos/${owner}/${repo}/commits/${commit.id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                Accept: 'application/vnd.github+json',
+              },
+            },
+          );
+
+          files =
+            commitDetails.data.files?.map((f: any) => ({
+              path: f.filename,
+              additions: f.additions,
+              deletions: f.deletions,
+              patch: f.patch,
+            })) || [];
+        } catch (err) {
+          console.log('Failed to fetch commit files:', err.message);
+        }
+
+        const enrichedCommit = {
+          ...commit,
+          files,
+        };
+
+        await taskEngine.handleCommit(taskId, enrichedCommit, projectId);
       }
     }
 

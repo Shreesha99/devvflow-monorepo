@@ -97,6 +97,8 @@ model Integration {
  organizationId String
  type           String
  config         Json
+
+ @@unique([organizationId, type])
 }
 
 enum TaskStatus {

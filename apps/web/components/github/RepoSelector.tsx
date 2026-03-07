@@ -39,13 +39,19 @@ export default function RepoSelector({
   const [searching, setSearching] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("github_token");
-    if (!token) return;
+    const loadRepos = async () => {
+      try {
+        const data = await getRepos();
+        setRepos(data);
+      } catch (err) {
+        console.error("Failed to fetch repos", err);
+        toast.error("Failed to load repositories");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    getRepos().then((data) => {
-      setRepos(data);
-      setLoading(false);
-    });
+    loadRepos();
   }, []);
 
   const selectRepo = async (repo: Repo) => {
