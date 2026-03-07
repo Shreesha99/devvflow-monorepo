@@ -21,7 +21,7 @@ export default function DashboardAnalyticsSkeleton() {
           <div key={i} className="bg-white border rounded-xl p-6">
             <div className="h-4 w-32 bg-gray-200 rounded mb-6"></div>
 
-            <div className="h-[240px] w-full bg-gray-100 rounded-lg"></div>
+            <div className="h-60 w-full bg-gray-100 rounded-lg"></div>
           </div>
         ))}
       </div>

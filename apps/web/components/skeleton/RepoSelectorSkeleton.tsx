@@ -1,6 +1,6 @@
 export default function RepoSelectorSkeleton() {
   return (
-    <div className="bg-white border rounded-xl shadow-sm w-[640px] mx-auto flex flex-col h-[520px] animate-pulse">
+    <div className="bg-white border rounded-xl shadow-sm w-160 mx-auto flex flex-col h-130 animate-pulse">
       {/* Header */}
       <div className="p-6 border-b space-y-2">
         <div className="h-5 w-40 bg-gray-200 rounded" />

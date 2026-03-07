@@ -7,6 +7,8 @@ import {
   PlayCircle,
   GitPullRequest,
   CheckCircle,
+  Loader2,
+  CheckCircle2,
 } from "lucide-react";
 
 import {
@@ -93,7 +95,7 @@ export default function KanbanBoard({ tasks }: { tasks: Task[] }) {
         <KanbanColumn
           id="IN_PROGRESS"
           title="IN PROGRESS"
-          icon={<PlayCircle size={18} />}
+          icon={<Loader2 size={18} />}
           tasks={boardTasks.filter((t) => t.status === "IN_PROGRESS")}
         />
 
@@ -107,13 +109,13 @@ export default function KanbanBoard({ tasks }: { tasks: Task[] }) {
         <KanbanColumn
           id="DONE"
           title="DONE"
-          icon={<CheckCircle size={18} />}
+          icon={<CheckCircle2 size={18} />}
           tasks={boardTasks.filter((t) => t.status === "DONE")}
         />
       </div>
       <DragOverlay>
         {activeTask ? (
-          <div className="w-[280px]">
+          <div className="w-70">
             <TaskCard task={activeTask} />
           </div>
         ) : null}

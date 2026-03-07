@@ -99,7 +99,7 @@ export default function RepoSelector({
   }
 
   return (
-    <div className="bg-white border rounded-xl shadow-sm w-[640px] mx-auto flex flex-col h-[520px]">
+    <div className="bg-white border rounded-xl shadow-sm w-160 mx-auto flex flex-col h-130">
       {/* Header */}
       <div className="p-6 border-b">
         <h2 className="font-semibold text-lg">Select Repository</h2>

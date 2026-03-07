@@ -27,7 +27,7 @@ export default function CreateTaskModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div className="w-[420px] rounded-xl bg-white shadow-xl p-6 space-y-5">
+      <div className="w-105 rounded-xl bg-white shadow-xl p-6 space-y-5">
         <div>
           <h2 className="text-lg font-semibold text-gray-900">Create Task</h2>
           <p className="text-sm text-gray-500 mt-1">

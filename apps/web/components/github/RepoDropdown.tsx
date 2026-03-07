@@ -52,7 +52,7 @@ export default function RepoDropdown({
         className="flex items-center gap-2 px-3 py-1.5 border rounded-md bg-gray-50 hover:bg-gray-100 text-sm"
       >
         <FolderGit2 size={14} />
-        <span className="truncate max-w-[200px]">{currentRepo}</span>
+        <span className="truncate max-w-50">{currentRepo}</span>
         <ChevronDown size={14} />
       </button>
 
