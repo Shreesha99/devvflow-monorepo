@@ -71,7 +71,7 @@ export default function KanbanBoard({ tasks }: { tasks: Task[] }) {
   }
 
   function handleDragStart(event: DragStartEvent) {
-    const task = tasks.find((t) => t.id === event.active.id);
+    const task = boardTasks.find((t) => t.id === event.active.id);
     if (task) setActiveTask(task);
   }
 

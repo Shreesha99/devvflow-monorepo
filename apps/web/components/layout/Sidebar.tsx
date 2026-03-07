@@ -9,7 +9,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 
-type View = "kanban" | "activity" | "settings";
+type View = "dashboard" | "kanban" | "activity" | "settings";
 
 export default function Sidebar({
   collapsed,
@@ -34,6 +34,13 @@ export default function Sidebar({
       </div>
 
       <nav className="flex flex-col gap-1 px-2">
+        <SidebarItem
+          icon={<LayoutDashboard size={18} />}
+          label="Dashboard"
+          collapsed={collapsed}
+          active={active === "dashboard"}
+          onClick={() => onNavigate("dashboard")}
+        />
         <SidebarItem
           icon={<Kanban size={18} />}
           label="Tasks"

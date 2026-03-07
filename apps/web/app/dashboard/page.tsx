@@ -3,13 +3,15 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { io } from "socket.io-client";
-import DashboardHeader from "@/components/dashboard/DashboardHeader";
+import DashboardHeader from "@/components/dashboard/TaskHeader";
 import KanbanBoard from "@/components/dashboard/KanbanBoard";
 import GithubConnectButton from "@/components/github/GithubConnectButton";
 import RepoSelector from "@/components/github/RepoSelector";
 import CreateTaskModal from "@/components/tasks/CreateTaskModal";
 import KanbanBoardSkeleton from "@/components/skeleton/KanbanBoardSkeleton";
 import Sidebar from "@/components/layout/Sidebar";
+import DashboardAnalytics from "@/components/dashboard/DashboardAnalytics";
+import DashboardAnalyticsSkeleton from "@/components/skeleton/DashboardAnalyticsSkeleton";
 
 const socket = io(process.env.NEXT_PUBLIC_API_URL!, {
   transports: ["websocket"],
@@ -44,9 +46,9 @@ export default function DashboardPage() {
   const [showCreateTask, setShowCreateTask] = useState(false);
   const [loadingTasks, setLoadingTasks] = useState(true);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [view, setView] = useState<"kanban" | "activity" | "settings">(
-    "kanban"
-  );
+  const [view, setView] = useState<
+    "dashboard" | "kanban" | "activity" | "settings"
+  >("dashboard");
 
   useEffect(() => {
     const repo = localStorage.getItem("connected_repo");
@@ -170,7 +172,7 @@ export default function DashboardPage() {
   }, []);
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className="bg-gray-50 h-screen flex flex-col overflow-hidden">
       <DashboardHeader
         repo={currentRepo || undefined}
         githubConnected={githubConnected}
@@ -185,7 +187,7 @@ export default function DashboardPage() {
         }}
       />
 
-      <div className="flex">
+      <div className="flex flex-1 overflow-hidden">
         {repoConnected && (
           <Sidebar
             collapsed={sidebarCollapsed}
@@ -195,7 +197,7 @@ export default function DashboardPage() {
           />
         )}
 
-        <div className="flex-1 p-8">
+        <div className="flex-1 p-8 overflow-y-auto">
           {!githubConnected && (
             <div className="flex items-center justify-center h-[70vh]">
               <GithubConnectButton />
@@ -226,6 +228,28 @@ export default function DashboardPage() {
                 <span className="text-lg leading-none">+</span>
                 New Task
               </button>
+            </div>
+          )}
+
+          {repoConnected && view === "dashboard" && (
+            <div className="relative">
+              <div
+                className={`transition-opacity duration-300 ${
+                  loadingTasks
+                    ? "opacity-100"
+                    : "opacity-0 pointer-events-none absolute inset-0"
+                }`}
+              >
+                <DashboardAnalyticsSkeleton />
+              </div>
+
+              <div
+                className={`transition-opacity duration-300 ${
+                  loadingTasks ? "opacity-0" : "opacity-100"
+                }`}
+              >
+                <DashboardAnalytics tasks={tasks} />
+              </div>
             </div>
           )}
 

@@ -37,7 +37,8 @@ export default function TaskCard({ task }: { task: Task }) {
       ref={setNodeRef}
       style={style}
       className={`bg-white p-3 mb-3 rounded-lg border border-gray-200 
-      hover:border-gray-300 hover:shadow-sm transition
+      hover:border-gray-300 hover:shadow-sm
+      transition-all duration-200 ease-out
       ${isDragging ? "opacity-40" : ""}`}
     >
       {/* HEADER */}
