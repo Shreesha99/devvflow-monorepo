@@ -46,7 +46,8 @@ export class AuthController {
       });
     }
 
-    const redirectUrl = `http://localhost:3001/dashboard?token=${user.accessToken}`;
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3001';
+    const redirectUrl = `${frontendUrl}/dashboard?token=${user.accessToken}`;
     return res.redirect(redirectUrl);
   }
 }
