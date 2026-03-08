@@ -93,7 +93,10 @@ export const githubWorker = new Worker(
         }
 
         const enrichedCommit = {
-          ...commit,
+          sha: commit.id,
+          message: commit.message,
+          author: commit.author?.name,
+          branch: payload.ref?.replace('refs/heads/', ''),
           files,
         };
 
@@ -128,6 +131,9 @@ export const githubWorker = new Worker(
           payload: {
             title,
             url: payload.pull_request.html_url,
+            status: 'open',
+            headSha: payload.pull_request.head.sha,
+            branch: payload.pull_request.head.ref,
           },
         },
       });
@@ -172,11 +178,88 @@ export const githubWorker = new Worker(
           payload: {
             title,
             url: payload.pull_request.html_url,
+            status: 'merged',
+            headSha: payload.pull_request.head.sha,
+            branch: payload.pull_request.head.ref,
           },
         },
       });
 
       realtime.emitTaskUpdate(task.id, 'DONE');
+
+      RealtimeGateway.io.emit('activity.created', {
+        taskId: task.id,
+        activity,
+      });
+    }
+
+    if (
+      event === 'pull_request' &&
+      payload.action === 'closed' &&
+      payload.pull_request.merged === false
+    ) {
+      const title = payload.pull_request.title;
+      const taskId = extractTaskNumber(title);
+
+      if (!taskId) return;
+
+      const task = await prisma.task.findFirst({
+        where: {
+          projectId,
+          number: taskId,
+        },
+      });
+
+      if (!task) return;
+
+      const activity = await prisma.activityEvent.create({
+        data: {
+          taskId: task.id,
+          type: 'pull_request_closed',
+          payload: {
+            title,
+            url: payload.pull_request.html_url,
+            status: 'closed',
+            headSha: payload.pull_request.head.sha,
+            branch: payload.pull_request.head.ref,
+          },
+        },
+      });
+
+      RealtimeGateway.io.emit('activity.created', {
+        taskId: task.id,
+        activity,
+      });
+    }
+
+    if (event === 'pull_request' && payload.action === 'reopened') {
+      const title = payload.pull_request.title;
+      const taskId = extractTaskNumber(title);
+
+      if (!taskId) return;
+
+      const task = await prisma.task.findFirst({
+        where: {
+          projectId,
+          number: taskId,
+        },
+      });
+
+      if (!task) return;
+
+      const activity = await prisma.activityEvent.create({
+        data: {
+          taskId: task.id,
+          type: 'pull_request_reopened',
+          payload: {
+            title,
+            url: payload.pull_request.html_url,
+            status: 'open',
+            headSha: payload.pull_request.head.sha,
+            branch: payload.pull_request.head.ref,
+          },
+        },
+      });
 
       RealtimeGateway.io.emit('activity.created', {
         taskId: task.id,

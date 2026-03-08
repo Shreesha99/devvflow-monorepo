@@ -26,6 +26,20 @@ export type Activity = {
     message?: string;
     title?: string;
     url?: string;
+
+    // commit fields
+    sha?: string;
+    branch?: string;
+    files?: {
+      path: string;
+      additions: number;
+      deletions: number;
+      patch?: string;
+    }[];
+
+    // PR fields
+    status?: "open" | "closed" | "merged";
+    headSha?: string;
   };
 };
 
@@ -48,7 +62,22 @@ export default function DashboardPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [view, setView] = useState<
     "dashboard" | "kanban" | "activity" | "settings"
-  >("dashboard");
+  >(() => {
+    if (typeof window !== "undefined") {
+      return (
+        (localStorage.getItem("dashboard_view") as
+          | "dashboard"
+          | "kanban"
+          | "activity"
+          | "settings") || "dashboard"
+      );
+    }
+    return "dashboard";
+  });
+
+  useEffect(() => {
+    localStorage.setItem("dashboard_view", view);
+  }, [view]);
 
   useEffect(() => {
     const repo = localStorage.getItem("connected_repo");

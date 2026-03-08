@@ -50,9 +50,10 @@ export class TaskEngineService {
         taskId: task.id,
         type: 'commit_pushed',
         payload: {
-          sha: commit.id,
+          sha: commit.sha,
           message: commit.message,
-          author: commit.author?.name,
+          author: commit.author,
+          branch: commit.branch,
           files: files,
         },
       },
