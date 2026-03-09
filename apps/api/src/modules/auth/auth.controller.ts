@@ -83,7 +83,7 @@ export class AuthController {
     global['oauthTempStore'] = global['oauthTempStore'] || {};
     global['oauthTempStore'][code] = user.accessToken;
 
-    const redirectUrl = `${process.env.FRONTEND_URL}/dashboard?code=${code}`;
+    const redirectUrl = `${process.env.FRONTEND_URL}?code=${code}`;
 
     return res.redirect(redirectUrl);
   }
