@@ -1,4 +1,4 @@
-# DevFlow
+# DevvFlow
 
 DevFlow is an automation first developer project management platform designed to synchronize real development activity with project tasks.
 
