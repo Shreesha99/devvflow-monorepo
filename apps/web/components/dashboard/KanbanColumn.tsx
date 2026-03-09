@@ -2,7 +2,7 @@
 
 import { Task } from "@/app/dashboard/page";
 import TaskCard from "./TaskCard";
-import { TaskStatus } from "../../../../packages/database/generated/client";
+import { TaskStatus } from "../../../../packages/types/task";
 import { useDroppable } from "@dnd-kit/core";
 
 export default function KanbanColumn({

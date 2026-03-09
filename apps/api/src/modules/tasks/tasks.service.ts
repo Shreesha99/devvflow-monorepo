@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { RealtimeGateway } from '../realtime/realtime.gateway';
-import { TaskStatus } from '../../../../../packages/database/generated/client';
+import { TaskStatus } from '@prisma/client';
 
 @Injectable()
 export class TasksService {

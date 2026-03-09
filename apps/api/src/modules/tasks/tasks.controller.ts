@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Patch, Body, Param } from '@nestjs/common';
 import { TasksService } from './tasks.service';
-import { TaskStatus } from '../../../../../packages/database/generated/client';
+import { TaskStatus } from '@prisma/client';
 
 @Controller('tasks')
 export class TasksController {
