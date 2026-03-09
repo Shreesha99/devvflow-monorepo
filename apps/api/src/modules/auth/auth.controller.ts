@@ -2,10 +2,27 @@ import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { PrismaService } from '../../prisma/prisma.service';
 import { encrypt } from '../../utils/crypto';
+import { randomUUID } from 'crypto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private prisma: PrismaService) {}
+
+  @Get('exchange')
+  async exchange(@Req() req) {
+    const code = req.query.code;
+
+    const store = global['oauthTempStore'] || {};
+    const token = store[code];
+
+    if (!token) {
+      return { error: 'Invalid code' };
+    }
+
+    delete store[code];
+
+    return { token };
+  }
 
   @Get('github')
   @UseGuards(AuthGuard('github'))
@@ -61,7 +78,12 @@ export class AuthController {
 
     // const redirectUrl = `${origin}/dashboard?token=${user.accessToken}`;
 
-    const redirectUrl = `${process.env.FRONTEND_URL}/dashboard?token=${user.accessToken}`;
+    const code = randomUUID();
+
+    global['oauthTempStore'] = global['oauthTempStore'] || {};
+    global['oauthTempStore'][code] = user.accessToken;
+
+    const redirectUrl = `${process.env.FRONTEND_URL}/dashboard?code=${code}`;
 
     return res.redirect(redirectUrl);
   }

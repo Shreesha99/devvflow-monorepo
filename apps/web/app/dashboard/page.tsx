@@ -96,30 +96,46 @@ export default function DashboardPage() {
   }, []);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
+    const initAuth = async () => {
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get("code");
 
-    const token = params.get("token");
-    const repo = localStorage.getItem("connected_repo");
-    const projectId = localStorage.getItem("connected_project");
+      const repo = localStorage.getItem("connected_repo");
+      const projectId = localStorage.getItem("connected_project");
 
-    if (token) {
-      localStorage.setItem("github_token", token);
-      setGithubConnected(true);
+      if (code) {
+        try {
+          const res = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/auth/exchange?code=${code}`
+          );
 
-      window.history.replaceState({}, "", "/dashboard");
-    }
+          const data = await res.json();
 
-    const storedToken = localStorage.getItem("github_token");
+          if (data.token) {
+            localStorage.setItem("github_token", data.token);
+            setGithubConnected(true);
+          }
 
-    if (storedToken) {
-      setGithubConnected(true);
-    }
+          window.history.replaceState({}, "", window.location.pathname);
+        } catch (err) {
+          console.error("Auth exchange failed", err);
+        }
+      }
 
-    if (repo && projectId) {
-      setRepoConnected(true);
-      setCurrentRepo(repo);
-      setCurrentProjectId(projectId);
-    }
+      const storedToken = localStorage.getItem("github_token");
+
+      if (storedToken) {
+        setGithubConnected(true);
+      }
+
+      if (repo && projectId) {
+        setRepoConnected(true);
+        setCurrentRepo(repo);
+        setCurrentProjectId(projectId);
+      }
+    };
+
+    initAuth();
   }, []);
 
   useEffect(() => {
