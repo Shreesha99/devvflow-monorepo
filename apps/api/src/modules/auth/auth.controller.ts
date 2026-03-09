@@ -20,7 +20,15 @@ export class AuthController {
 
     const encryptedToken = encrypt(user.accessToken);
 
-    const org = await this.prisma.organization.findFirst();
+    let org = await this.prisma.organization.findFirst();
+
+    if (!org) {
+      org = await this.prisma.organization.create({
+        data: {
+          name: `${user.username}'s Organization`,
+        },
+      });
+    }
 
     if (org) {
       await this.prisma.integration.upsert({

@@ -15,15 +15,22 @@ export class GithubController {
   @Post()
   async handleWebhook(
     @Headers('x-github-event') event: string,
+    @Headers('x-github-delivery') deliveryId: string,
     @Body() payload: any,
   ) {
     console.log('Webhook event:', event);
-    console.log('Payload keys:', Object.keys(payload || {}));
+    console.log('Delivery ID:', deliveryId);
 
-    await githubEventsQueue.add('github-event', {
-      event,
-      payload,
-    });
+    await githubEventsQueue.add(
+      'github-event',
+      {
+        event,
+        payload,
+      },
+      {
+        jobId: deliveryId,
+      },
+    );
 
     return { received: true };
   }
@@ -79,14 +86,24 @@ export class GithubController {
 
     const token = decrypt((integration.config as any).accessToken);
 
-    const project = await this.prisma.project.create({
-      data: {
-        name: repo,
+    let project = await this.prisma.project.findFirst({
+      where: {
         githubRepoOwner: owner,
         githubRepoName: repo,
         organizationId: integration.organizationId,
       },
     });
+
+    if (!project) {
+      project = await this.prisma.project.create({
+        data: {
+          name: repo,
+          githubRepoOwner: owner,
+          githubRepoName: repo,
+          organizationId: integration.organizationId,
+        },
+      });
+    }
 
     return project;
   }

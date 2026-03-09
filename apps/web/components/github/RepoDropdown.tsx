@@ -33,6 +33,11 @@ export default function RepoDropdown({
   }, []);
 
   const selectRepo = async (repo: Repo) => {
+    if (repo.fullName === currentRepo) {
+      setOpen(false);
+      return;
+    }
+
     const [owner, name] = repo.fullName.split("/");
 
     const project = await connectRepo(owner, name);
