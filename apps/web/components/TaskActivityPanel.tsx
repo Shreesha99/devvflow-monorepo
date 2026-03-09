@@ -25,17 +25,16 @@ type ActivityEvent = {
 type Props = {
   taskId: number;
 };
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
 export default function TaskActivityPanel({ taskId }: Props) {
   const [activities, setActivities] = useState<Activity[]>([]);
 
   // Load initial activity
   useEffect(() => {
-    axios
-      .get<Activity[]>(`http://localhost:3000/activity/task/${taskId}`)
-      .then((res) => {
-        setActivities(res.data);
-      });
+    axios.get<Activity[]>(`${API}/activity/task/${taskId}`).then((res) => {
+      setActivities(res.data);
+    });
   }, [taskId]);
 
   // Listen for realtime updates

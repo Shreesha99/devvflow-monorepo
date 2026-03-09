@@ -4,7 +4,7 @@ import { Github, ArrowRight } from "lucide-react";
 
 export default function GithubConnectButton() {
   const connect = () => {
-    window.location.href = "http://localhost:3000/auth/github";
+    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/github`;
   };
 
   return (
