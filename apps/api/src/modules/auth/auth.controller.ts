@@ -54,12 +54,14 @@ export class AuthController {
     }
 
     // Detect frontend automatically
-    const referer = req.headers.referer;
-    const origin = referer
-      ? new URL(referer).origin
-      : process.env.FRONTEND_URL || 'http://localhost:3001';
+    // const referer = req.headers.referer;
+    // const origin = referer
+    //   ? new URL(referer).origin
+    //   : process.env.FRONTEND_URL || 'http://localhost:3001';
 
-    const redirectUrl = `${origin}/dashboard?token=${user.accessToken}`;
+    // const redirectUrl = `${origin}/dashboard?token=${user.accessToken}`;
+
+    const redirectUrl = `${process.env.FRONTEND_URL}/dashboard?token=${user.accessToken}`;
 
     return res.redirect(redirectUrl);
   }
