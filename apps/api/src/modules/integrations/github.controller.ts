@@ -75,9 +75,7 @@ export class GithubController {
     const { owner, repo } = body;
 
     const integration = await this.prisma.integration.findFirst({
-      where: {
-        type: 'github',
-      },
+      where: { type: 'github' },
     });
 
     if (!integration || !integration.config) {
@@ -103,6 +101,30 @@ export class GithubController {
           organizationId: integration.organizationId,
         },
       });
+    }
+
+    // Create GitHub webhook automatically
+    try {
+      await axios.post(
+        `https://api.github.com/repos/${owner}/${repo}/hooks`,
+        {
+          name: 'web',
+          active: true,
+          events: ['push', 'pull_request', 'issues', 'issue_comment'],
+          config: {
+            url: `${process.env.API_URL}/webhooks/github`,
+            content_type: 'json',
+          },
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: 'application/vnd.github+json',
+          },
+        },
+      );
+    } catch (err) {
+      console.log('Webhook already exists or failed', err.response?.data);
     }
 
     return project;

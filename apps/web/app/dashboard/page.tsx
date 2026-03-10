@@ -100,9 +100,6 @@ export default function DashboardPage() {
       const params = new URLSearchParams(window.location.search);
       const code = params.get("code");
 
-      const repo = localStorage.getItem("connected_repo");
-      const projectId = localStorage.getItem("connected_project");
-
       if (code) {
         try {
           const res = await fetch(
@@ -116,12 +113,18 @@ export default function DashboardPage() {
             setGithubConnected(true);
           }
 
-          window.history.replaceState({}, "", window.location.pathname);
+          // clean URL
+          window.history.replaceState({}, "", "/");
+
+          // move to dashboard
+          window.location.href = "/dashboard";
         } catch (err) {
           console.error("Auth exchange failed", err);
         }
       }
 
+      const repo = localStorage.getItem("connected_repo");
+      const projectId = localStorage.getItem("connected_project");
       const storedToken = localStorage.getItem("github_token");
 
       if (storedToken) {
