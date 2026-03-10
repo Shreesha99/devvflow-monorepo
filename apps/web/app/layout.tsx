@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "react-hot-toast";
+import { ThemeProvider } from "next-themes";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,9 +16,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "DevvFlow",
+  title: "DevvDeck",
   description:
-    "DevvFlow is a task management tool that integrates with GitHub Projects to help developers manage their tasks and projects more efficiently.",
+    "DevvDeck is a task management tool that integrates with GitHub Projects to help developers manage their tasks and projects more efficiently.",
 };
 
 export default function RootLayout({
@@ -26,26 +27,33 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <TooltipProvider>
-          {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <TooltipProvider>
+            {children}
 
-          <Toaster
-            position="bottom-center"
-            toastOptions={{
-              duration: 4000,
-              style: {
-                background: "#111",
-                color: "#fff",
-                borderRadius: "10px",
-                fontSize: "14px",
-              },
-            }}
-          />
-        </TooltipProvider>
+            <Toaster
+              position="bottom-center"
+              toastOptions={{
+                duration: 4000,
+                style: {
+                  background: "#111",
+                  color: "#fff",
+                  borderRadius: "10px",
+                  fontSize: "14px",
+                },
+              }}
+            />
+          </TooltipProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -14,9 +14,7 @@ export class RealtimeGateway {
     RealtimeGateway.io = server;
   }
 
-  handleConnection(client: any) {
-    console.log('Client connected:', client.id);
-  }
+  handleConnection(client: any) {}
 
   emitTaskUpdate(taskId: number, status: string) {
     RealtimeGateway.io.emit('task.updated', { taskId, status });

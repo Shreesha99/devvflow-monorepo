@@ -1,4 +1,12 @@
-import { Controller, Post, Headers, Body, Get, Patch } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Headers,
+  Body,
+  Get,
+  Patch,
+  Query,
+} from '@nestjs/common';
 import { githubEventsQueue } from '../../queues/github-events.queue';
 import { GithubService } from './github/github.service';
 import { decrypt } from 'src/utils/crypto';
@@ -18,9 +26,6 @@ export class GithubController {
     @Headers('x-github-delivery') deliveryId: string,
     @Body() payload: any,
   ) {
-    console.log('Webhook event:', event);
-    console.log('Delivery ID:', deliveryId);
-
     await githubEventsQueue.add(
       'github-event',
       {
@@ -36,11 +41,14 @@ export class GithubController {
   }
 
   @Get('repos')
-  async getRepos() {
+  async getRepos(
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '30',
+  ) {
+    const pageNumber = Number(page);
+    const limitNumber = Number(limit);
     const integration = await this.prisma.integration.findFirst({
-      where: {
-        type: 'github',
-      },
+      where: { type: 'github' },
     });
 
     if (!integration || !integration.config) {
@@ -50,6 +58,12 @@ export class GithubController {
     const token = decrypt((integration.config as any).accessToken);
 
     const res = await axios.get('https://api.github.com/user/repos', {
+      params: {
+        per_page: limitNumber,
+        page: pageNumber,
+        sort: 'full_name',
+        direction: 'asc',
+      },
       headers: {
         Authorization: `Bearer ${token}`,
         Accept: 'application/vnd.github+json',
@@ -123,9 +137,7 @@ export class GithubController {
           },
         },
       );
-    } catch (err) {
-      console.log('Webhook already exists or failed', err.response?.data);
-    }
+    } catch (err) {}
 
     return project;
   }

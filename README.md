@@ -1,8 +1,8 @@
-# DevvFlow
+# DevvDeck
 
-DevFlow is an automation first developer project management platform designed to synchronize real development activity with project tasks.
+DevvDeck is an automation first developer project management platform designed to synchronize real development activity with project tasks.
 
-Instead of manually updating project boards, DevFlow automatically updates tasks when developers push commits, open pull requests, or merge code. The goal is to eliminate manual project tracking and ensure project status always reflects the real state of the codebase.
+Instead of manually updating project boards, DevvDeck automatically updates tasks when developers push commits, open pull requests, or merge code. The goal is to eliminate manual project tracking and ensure project status always reflects the real state of the codebase.
 
 ---
 
@@ -38,11 +38,11 @@ Instead of manually updating project boards, DevFlow automatically updates tasks
 
 # 1. Introduction
 
-DevFlow is a developer focused project management platform that automatically links software development activity with project management tasks.
+DevvDeck is a developer focused project management platform that automatically links software development activity with project management tasks.
 
 Traditional project management tools require developers to constantly update tasks, move cards between columns, and manually link commits to issues. This creates friction and causes project boards to become outdated.
 
-DevFlow removes this manual work by connecting directly to GitHub repositories and processing development events automatically.
+DevvDeck removes this manual work by connecting directly to GitHub repositories and processing development events automatically.
 
 When developers perform actions such as:
 
@@ -50,15 +50,15 @@ When developers perform actions such as:
 - opening pull requests
 - merging pull requests
 
-DevFlow processes these events and updates the associated project tasks automatically.
+DevvDeck processes these events and updates the associated project tasks automatically.
 
 ---
 
 # 2. Product Vision
 
-The mission of DevFlow is to eliminate manual project management updates for development teams.
+The mission of DevvDeck is to eliminate manual project management updates for development teams.
 
-Instead of forcing developers to manage tasks manually, DevFlow ensures that project status reflects real development progress.
+Instead of forcing developers to manage tasks manually, DevvDeck ensures that project status reflects real development progress.
 
 Key principles:
 
@@ -110,13 +110,13 @@ Managers cannot easily see real development progress.
 
 # 4. Solution
 
-DevFlow integrates directly with GitHub repositories using webhooks.
+DevvDeck integrates directly with GitHub repositories using webhooks.
 
 Example commit message:
 
 git commit -m "fix login bug (#42)"
 
-DevFlow parses the commit message and extracts the task identifier.
+DevvDeck parses the commit message and extracts the task identifier.
 
 Once detected the system will:
 
@@ -160,7 +160,7 @@ Activity events track actions inside the system such as commits or merges.
 
 GitHub Integration
 
-DevFlow integrates with GitHub repositories through webhooks. Supported events include:
+DevvDeck integrates with GitHub repositories through webhooks. Supported events include:
 
 - push events
 - commit messages
@@ -175,7 +175,7 @@ Example:
 
 git commit -m "implement auth system (#18)"
 
-DevFlow automatically associates the commit with task 18.
+DevvDeck automatically associates the commit with task 18.
 
 Kanban Boards
 
@@ -206,7 +206,7 @@ The dashboard updates instantly when events occur using WebSocket communication.
 
 # 7. System Architecture
 
-DevFlow uses an event driven architecture.
+DevvDeck uses an event driven architecture.
 
 Major components:
 
@@ -344,7 +344,7 @@ Pull requests update tasks.
 
 # 12. Database Design
 
-DevFlow uses PostgreSQL.
+DevvDeck uses PostgreSQL.
 
 Core tables:
 
@@ -436,7 +436,7 @@ Dashboard refreshes automatically
 
 # 16. Repository Structure
 
-devflow
+DevvDeck
 
 frontend
 
@@ -600,7 +600,7 @@ Cross repository project tracking
 
 # 23. Target Users
 
-DevFlow is designed for:
+DevvDeck is designed for:
 
 Startup engineering teams
 

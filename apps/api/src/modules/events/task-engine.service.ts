@@ -12,7 +12,6 @@ export class TaskEngineService {
 
   async handleCommit(taskNumber: number, commit: any, projectId: string) {
     const match = commit.message.match(/TASK-(\d+)/);
-    console.log('FILES RECEIVED:', commit.files);
 
     if (match) {
       taskNumber = Number(match[1]);

@@ -297,9 +297,6 @@ function CommitItem({ commit, prs }: { commit: any; prs: any[] }) {
     prs.find((p) => p.payload?.branch === commit.payload?.branch) ||
     prs.find((p) => p.payload?.headSha === commit.payload?.sha);
 
-  console.log("commit", commit.payload);
-  console.log("prs", prs);
-
   return (
     <div className="bg-white rounded-lg shadow-sm">
       <button

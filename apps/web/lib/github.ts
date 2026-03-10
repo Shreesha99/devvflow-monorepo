@@ -2,8 +2,10 @@ import axios from "axios";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
-export async function getRepos() {
-  const res = await axios.get(`${API}/webhooks/github/repos`);
+export async function getRepos(page: number = 1, limit: number = 30) {
+  const res = await axios.get(`${API}/webhooks/github/repos`, {
+    params: { page, limit },
+  });
 
   return res.data.map((repo: any) => ({
     ...repo,

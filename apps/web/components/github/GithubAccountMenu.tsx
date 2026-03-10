@@ -20,7 +20,6 @@ export default function GithubAccountMenu({
   useEffect(() => {
     const fetchUser = async () => {
       const token = localStorage.getItem("github_token");
-
       if (!token) return;
 
       const res = await fetch("https://api.github.com/user", {
@@ -53,18 +52,21 @@ export default function GithubAccountMenu({
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 hover:bg-gray-100 rounded-md px-2 py-1 transition"
+        className="flex items-center gap-2 hover:bg-muted rounded-md px-2 py-1 transition"
       >
         <img src={user.avatar_url} className="w-7 h-7 rounded-full" />
 
-        <span className="text-sm text-gray-700">{user.login}</span>
+        <span className="text-sm text-foreground">{user.login}</span>
       </button>
 
       {open && (
-        <div className="z-999 absolute right-0 mt-2 w-56 bg-white border rounded-lg shadow-lg overflow-hidden">
-          <div className="p-3 border-b">
-            <div className="text-sm font-medium">{user.login}</div>
-            <div className="text-xs text-gray-500 flex items-center gap-1">
+        <div className="absolute right-0 mt-2 w-56 bg-card border border-border rounded-lg shadow-lg overflow-hidden">
+          <div className="p-3 border-b border-border">
+            <div className="text-sm font-medium text-foreground">
+              {user.login}
+            </div>
+
+            <div className="text-xs text-muted-foreground flex items-center gap-1">
               <Github size={12} />
               GitHub connected
             </div>
@@ -72,7 +74,7 @@ export default function GithubAccountMenu({
 
           <button
             onClick={onLogout}
-            className="w-full text-left px-3 py-2 hover:bg-gray-50 text-sm flex items-center gap-2"
+            className="w-full text-left px-3 py-2 hover:bg-muted text-sm flex items-center gap-2"
           >
             <RefreshCw size={14} />
             Switch account
@@ -80,7 +82,7 @@ export default function GithubAccountMenu({
 
           <button
             onClick={onLogout}
-            className="w-full text-left px-3 py-2 hover:bg-gray-50 text-sm flex items-center gap-2 text-red-600"
+            className="w-full text-left px-3 py-2 hover:bg-muted text-sm flex items-center gap-2 text-red-600"
           >
             <LogOut size={14} />
             Disconnect GitHub

@@ -51,13 +51,6 @@ export class TasksService {
 
     const nextNumber = (result._max.number ?? 0) + 1;
 
-    console.log(
-      'Creating task for project:',
-      data.projectId,
-      'next:',
-      nextNumber,
-    );
-
     const task = await this.prisma.task.create({
       data: {
         ...data,

@@ -56,8 +56,6 @@ export class GithubService {
       });
     }
 
-    console.log('Webhook URL:', process.env.WEBHOOK_URL);
-
     try {
       await axios.post(
         `https://api.github.com/repos/${owner}/${repo}/hooks`,
@@ -82,7 +80,6 @@ export class GithubService {
         err.response?.data?.errors?.[0]?.message ===
         'Hook already exists on this repository'
       ) {
-        console.log('Webhook already installed');
       } else {
         throw err;
       }

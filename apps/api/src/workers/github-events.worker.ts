@@ -13,9 +13,8 @@ const taskEngine = new TaskEngineService(prisma, realtime);
 export const githubWorker = new Worker(
   'github-events',
   async (job) => {
-    console.log('Worker picked up job:', job.data);
     const payload = job.data.payload || job.data;
-    console.log('Worker payload keys:', Object.keys(payload || {}));
+
     const event = job.data.event || 'pull_request';
     const owner = payload.repository?.owner?.login;
     const repo = payload.repository?.name;
@@ -28,26 +27,17 @@ export const githubWorker = new Worker(
     });
 
     if (!project) {
-      console.log('No project found for repo:', owner, repo);
       return;
     }
 
     const projectId = project.id;
-
-    console.log('Resolved projectId:', projectId);
-
-    console.log('Worker projectId:', projectId);
 
     // Handle push commits
     if (event === 'push') {
       const commits = payload.commits || [];
 
       for (const commit of commits) {
-        console.log('Processing commit:', commit.message);
-
         const taskId = extractTaskNumber(commit.message);
-
-        console.log('Extracted taskId:', taskId);
 
         if (!taskId) continue;
 
@@ -61,11 +51,9 @@ export const githubWorker = new Worker(
           });
 
           if (!integration) {
-            console.log('No GitHub integration found');
             return;
           }
           if (!integration.config) {
-            console.log('Integration config missing');
             return;
           }
 
@@ -88,9 +76,7 @@ export const githubWorker = new Worker(
               deletions: f.deletions,
               patch: f.patch,
             })) || [];
-        } catch (err) {
-          console.log('Failed to fetch commit files:', err.message);
-        }
+        } catch (err) {}
 
         const enrichedCommit = {
           sha: commit.id,

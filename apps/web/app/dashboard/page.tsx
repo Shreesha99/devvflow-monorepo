@@ -26,8 +26,6 @@ export type Activity = {
     message?: string;
     title?: string;
     url?: string;
-
-    // commit fields
     sha?: string;
     branch?: string;
     files?: {
@@ -36,8 +34,6 @@ export type Activity = {
       deletions: number;
       patch?: string;
     }[];
-
-    // PR fields
     status?: "open" | "closed" | "merged";
     headSha?: string;
   };
@@ -84,9 +80,7 @@ export default function DashboardPage() {
     const projectId = localStorage.getItem("connected_project");
     const token = localStorage.getItem("github_token");
 
-    if (token) {
-      setGithubConnected(true);
-    }
+    if (token) setGithubConnected(true);
 
     if (repo && projectId) {
       setCurrentRepo(repo);
@@ -113,23 +107,16 @@ export default function DashboardPage() {
             setGithubConnected(true);
           }
 
-          // clean URL
           window.history.replaceState({}, "", "/");
-
-          // move to dashboard
           window.location.href = "/dashboard";
-        } catch (err) {
-          console.error("Auth exchange failed", err);
-        }
+        } catch (err) {}
       }
 
       const repo = localStorage.getItem("connected_repo");
       const projectId = localStorage.getItem("connected_project");
       const storedToken = localStorage.getItem("github_token");
 
-      if (storedToken) {
-        setGithubConnected(true);
-      }
+      if (storedToken) setGithubConnected(true);
 
       if (repo && projectId) {
         setRepoConnected(true);
@@ -154,7 +141,6 @@ export default function DashboardPage() {
 
         setTasks(res.data);
       } catch (err) {
-        console.error("Failed to load tasks", err);
       } finally {
         setLoadingTasks(false);
       }
@@ -165,14 +151,12 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const handleTaskCreated = (task: any) => {
-      // only add tasks belonging to the current project
       if (task.projectId === currentProjectId) {
         setTasks((prev) => [...prev, task]);
       }
     };
 
     socket.on("task.created", handleTaskCreated);
-
     return () => {
       socket.off("task.created", handleTaskCreated);
     };
@@ -191,7 +175,6 @@ export default function DashboardPage() {
     };
 
     socket.on("task.updated", handleTaskUpdated);
-
     return () => {
       socket.off("task.updated", handleTaskUpdated);
     };
@@ -221,14 +204,23 @@ export default function DashboardPage() {
     };
 
     socket.on("activity.created", handleActivityCreated);
-
     return () => {
       socket.off("activity.created", handleActivityCreated);
     };
   }, []);
 
   return (
-    <div className="bg-gray-50 h-screen flex flex-col overflow-hidden">
+    <div
+      className="h-screen flex flex-col overflow-hidden bg-background dashboard-gradient relative"
+      style={{
+        backgroundImage:
+          "radial-gradient(circle at 20% 10%, rgba(29,99,216,0.08), transparent 40%), radial-gradient(circle at 80% 80%, rgba(122,57,200,0.06), transparent 40%)",
+      }}
+    >
+      <div className="dashboard-glow">
+        <div className="glow-blob glow-blue blob-1" />
+        <div className="glow-blob glow-purple blob-2" />
+      </div>
       <DashboardHeader
         repo={currentRepo || undefined}
         githubConnected={githubConnected}
@@ -274,12 +266,13 @@ export default function DashboardPage() {
 
           {repoConnected && view === "kanban" && (
             <div className="flex items-center justify-between px-4">
-              <h2 className="text-lg font-semibold text-gray-900">
+              <h2 className="text-lg font-semibold text-foreground">
                 {currentRepo}
               </h2>
+
               <button
                 onClick={() => setShowCreateTask(true)}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-black text-white text-sm font-medium hover:bg-neutral-800 transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition"
               >
                 <span className="text-lg leading-none">+</span>
                 New Task
@@ -332,13 +325,13 @@ export default function DashboardPage() {
           )}
 
           {repoConnected && view === "activity" && (
-            <div className="text-sm text-gray-500">
+            <div className="text-sm text-muted-foreground">
               Activity view coming soon
             </div>
           )}
 
           {repoConnected && view === "settings" && (
-            <div className="text-sm text-gray-500">
+            <div className="text-sm text-muted-foreground">
               Settings view coming soon
             </div>
           )}
