@@ -62,9 +62,9 @@ export default function DashboardHeader({
         </motion.div>
 
         {githubConnected && (
-          <motion.div whileHover={{ scale: 1.05 }}>
+          <div>
             <GithubAccountMenu onLogout={onLogoutGithub} />
-          </motion.div>
+          </div>
         )}
       </motion.div>
     </motion.div>

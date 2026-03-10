@@ -43,6 +43,7 @@ export default function RepoSelector({
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<SortOption>("name");
   const [searching, setSearching] = useState(false);
+  const [connecting, setConnecting] = useState(false);
 
   const observer = useRef<IntersectionObserver | null>(null);
 
@@ -120,6 +121,10 @@ export default function RepoSelector({
   );
 
   const selectRepo = async (repo: Repo) => {
+    if (connecting) return;
+
+    setConnecting(true);
+
     const [owner, name] = repo.fullName.split("/");
 
     try {
@@ -135,6 +140,7 @@ export default function RepoSelector({
       toast.error(
         "Unable to connect repository. You may not have access to this repo."
       );
+      setConnecting(false);
     }
   };
 
@@ -170,8 +176,32 @@ export default function RepoSelector({
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35 }}
-      className="bg-card/90 backdrop-blur-sm border border-border rounded-xl shadow-sm w-160 mx-auto flex flex-col h-130"
+      className="relative bg-card/90 backdrop-blur-sm border border-border rounded-xl shadow-sm w-160 mx-auto flex flex-col h-130"
     >
+      <AnimatePresence>
+        {connecting && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 z-50 bg-card/80 backdrop-blur-sm flex items-center justify-center rounded-xl"
+          >
+            <div className="flex items-center gap-3 text-sm text-muted-foreground">
+              <motion.div
+                className="w-4 h-4 border-2 border-muted border-t-primary rounded-full"
+                animate={{ rotate: 360 }}
+                transition={{
+                  repeat: Infinity,
+                  duration: 0.9,
+                  ease: "linear",
+                }}
+              />
+
+              <span>Connecting repository...</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       {/* HEADER */}
 
       <div className="p-6 border-b border-border">
@@ -184,6 +214,24 @@ export default function RepoSelector({
           <span className="font-medium text-foreground">{repos.length}</span>
 
           <span>repositories loaded</span>
+
+          {(loading || loadingMore) && (
+            <motion.div
+              className="ml-2 flex items-center gap-1"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              <motion.div
+                className="w-3 h-3 border-2 border-muted border-t-primary rounded-full"
+                animate={{ rotate: 360 }}
+                transition={{
+                  repeat: Infinity,
+                  duration: 0.9,
+                  ease: "linear",
+                }}
+              />
+            </motion.div>
+          )}
         </div>
 
         <p className="text-sm text-muted-foreground mt-1">
@@ -246,7 +294,7 @@ export default function RepoSelector({
         className="flex-1 overflow-y-auto p-4 relative"
       >
         <AnimatePresence>
-          {searching && (
+          {(searching || loading) && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -254,13 +302,27 @@ export default function RepoSelector({
               className="absolute inset-0 p-4 space-y-2"
             >
               {Array.from({ length: 6 }).map((_, i) => (
-                <div
+                <motion.div
                   key={i}
-                  className="p-3 border border-border rounded-md flex items-center gap-2 animate-pulse"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: i * 0.05 }}
+                  className="relative overflow-hidden p-3 border border-border rounded-md flex items-center gap-2"
                 >
-                  <div className="w-4 h-4 bg-muted rounded" />
-                  <div className="h-3 bg-muted rounded w-[60%]" />
-                </div>
+                  <motion.div
+                    initial={{ x: "-100%" }}
+                    animate={{ x: "100%" }}
+                    transition={{
+                      duration: 1.2,
+                      ease: "linear",
+                      repeat: Infinity,
+                    }}
+                    className="absolute inset-0 bg-linear-to-r from-transparent via-white/10 to-transparent"
+                  />
+
+                  <div className="w-4 h-4 bg-muted rounded z-10" />
+                  <div className="h-3 bg-muted rounded w-[60%] z-10" />
+                </motion.div>
               ))}
             </motion.div>
           )}
@@ -335,7 +397,12 @@ export default function RepoSelector({
                   }}
                 />
 
-                <span>Loading more repositories</span>
+                <motion.span
+                  animate={{ opacity: [0.5, 1, 0.5] }}
+                  transition={{ duration: 1.4, repeat: Infinity }}
+                >
+                  Loading more repositories
+                </motion.span>
               </div>
             </motion.div>
           )}

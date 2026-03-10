@@ -60,7 +60,7 @@ export default function GithubAccountMenu({
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-2 w-56 bg-card border border-border rounded-lg shadow-lg overflow-hidden">
+        <div className="absolute right-0 mt-2 w-56 bg-card border border-border rounded-lg shadow-xl overflow-hidden z-9999">
           <div className="p-3 border-b border-border">
             <div className="text-sm font-medium text-foreground">
               {user.login}
