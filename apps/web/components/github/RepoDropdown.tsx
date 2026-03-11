@@ -29,6 +29,10 @@ export default function RepoDropdown({
     });
   }, []);
 
+  useEffect(() => {
+    getRepos().then(setRepos);
+  }, []);
+
   const selectRepo = async (repo: Repo) => {
     if (repo.fullName === currentRepo) {
       setOpen(false);
