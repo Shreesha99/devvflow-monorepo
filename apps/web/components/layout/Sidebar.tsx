@@ -24,11 +24,14 @@ export default function Sidebar({
 }) {
   return (
     <div
-      className={`bg-white border-r border-gray-200 transition-all duration-300 flex flex-col
+      className={`bg-card border-r border-border transition-all duration-300 flex flex-col
       ${collapsed ? "w-16" : "w-64"} h-[calc(100vh-64px)]`}
     >
       <div className="p-3 flex justify-end">
-        <button onClick={toggle} className="text-gray-500 hover:text-black">
+        <button
+          onClick={toggle}
+          className="text-muted-foreground hover:text-foreground"
+        >
           {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
         </button>
       </div>
@@ -41,6 +44,7 @@ export default function Sidebar({
           active={active === "dashboard"}
           onClick={() => onNavigate("dashboard")}
         />
+
         <SidebarItem
           icon={<Kanban size={18} />}
           label="Tasks"
@@ -86,7 +90,11 @@ function SidebarItem({
     <button
       onClick={onClick}
       className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition w-full text-left
-      ${active ? "bg-black text-white" : "text-gray-700 hover:bg-gray-100"}`}
+      ${
+        active
+          ? "bg-primary text-primary-foreground"
+          : "text-muted-foreground hover:bg-muted hover:text-foreground"
+      }`}
     >
       {icon}
       {!collapsed && <span>{label}</span>}

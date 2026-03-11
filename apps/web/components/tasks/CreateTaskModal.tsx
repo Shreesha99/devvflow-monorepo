@@ -27,10 +27,10 @@ export default function CreateTaskModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div className="w-105 rounded-xl bg-white shadow-xl p-6 space-y-5">
+      <div className="w-105 rounded-xl bg-card border border-border shadow-xl p-6 space-y-5">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">Create Task</h2>
-          <p className="text-sm text-gray-500 mt-1">
+          <h2 className="text-lg font-semibold text-foreground">Create Task</h2>
+          <p className="text-sm text-muted-foreground mt-1">
             Add a new task to your project
           </p>
         </div>
@@ -38,7 +38,7 @@ export default function CreateTaskModal({
         <div className="space-y-3">
           <input
             placeholder="Task title"
-            className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-black"
+            className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:ring-2 focus:ring-primary/30"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
@@ -46,7 +46,7 @@ export default function CreateTaskModal({
           <textarea
             placeholder="Description"
             rows={4}
-            className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-black resize-none"
+            className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:ring-2 focus:ring-primary/30 resize-none"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
@@ -55,14 +55,14 @@ export default function CreateTaskModal({
         <div className="flex justify-end gap-3 pt-2">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm rounded-md border border-gray-200 hover:bg-gray-50 transition"
+            className="px-4 py-2 text-sm rounded-md border border-border hover:bg-muted transition"
           >
             Cancel
           </button>
 
           <button
             onClick={submit}
-            className="px-4 py-2 text-sm rounded-md bg-black text-white hover:bg-neutral-800 transition"
+            className="px-4 py-2 text-sm rounded-md bg-primary text-primary-foreground hover:opacity-90 transition"
           >
             Create Task
           </button>

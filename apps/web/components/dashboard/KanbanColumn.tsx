@@ -23,9 +23,9 @@ export default function KanbanColumn({
   return (
     <div
       ref={setNodeRef}
-      className="bg-gray-100 p-4 rounded-xl border border-gray-200"
+      className="bg-card p-4 rounded-xl border border-border"
     >
-      <div className="flex items-center gap-2 mb-4 font-semibold text-gray-700">
+      <div className="flex items-center gap-2 mb-4 font-semibold text-muted-foreground">
         {icon}
         {title}
       </div>

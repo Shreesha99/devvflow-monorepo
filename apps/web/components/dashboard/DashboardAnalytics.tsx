@@ -67,8 +67,6 @@ export default function DevFlowAnalytics({ tasks }: { tasks: Task[] }) {
 
   const COLORS = ["#e5e7eb", "#3b82f6", "#f59e0b", "#10b981"];
 
-  /* VELOCITY */
-
   const last7Days = Array.from({ length: 7 }).map((_, i) =>
     format(subDays(new Date(), 6 - i), "MMM d")
   );
@@ -81,8 +79,6 @@ export default function DevFlowAnalytics({ tasks }: { tasks: Task[] }) {
 
     return { day, tasks: count };
   });
-
-  /* CONTRIBUTORS */
 
   const contributors: Record<string, number> = {};
 
@@ -98,7 +94,7 @@ export default function DevFlowAnalytics({ tasks }: { tasks: Task[] }) {
 
   return (
     <div className="space-y-10">
-      {/* HERO METRICS */}
+      {/* METRICS */}
 
       <div className="grid grid-cols-4 gap-6">
         <Metric
@@ -129,8 +125,6 @@ export default function DevFlowAnalytics({ tasks }: { tasks: Task[] }) {
       {/* CHARTS */}
 
       <div className="grid grid-cols-2 gap-6">
-        {/* TASK DISTRIBUTION */}
-
         <ChartCard title="Task Distribution">
           {tasks.length === 0 ? (
             <EmptyState
@@ -157,8 +151,6 @@ export default function DevFlowAnalytics({ tasks }: { tasks: Task[] }) {
             </ResponsiveContainer>
           )}
         </ChartCard>
-
-        {/* VELOCITY */}
 
         <ChartCard title="Weekly Throughput">
           {velocity.every((v) => v.tasks === 0) ? (
@@ -189,11 +181,9 @@ export default function DevFlowAnalytics({ tasks }: { tasks: Task[] }) {
         </ChartCard>
       </div>
 
-      {/* LOWER SECTION */}
+      {/* LOWER */}
 
       <div className="grid grid-cols-2 gap-6">
-        {/* CONTRIBUTORS */}
-
         <ChartCard title="Top Contributors">
           {leaderboard.length === 0 ? (
             <EmptyState
@@ -202,22 +192,22 @@ export default function DevFlowAnalytics({ tasks }: { tasks: Task[] }) {
             />
           ) : (
             <div className="space-y-4">
-              {leaderboard.map((dev, i) => (
+              {leaderboard.map((dev) => (
                 <div
                   key={dev.name}
                   className="flex items-center justify-between"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-xs font-medium">
+                    <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-xs font-medium text-foreground">
                       {dev.name.charAt(0)}
                     </div>
 
-                    <span className="text-sm font-medium text-gray-800">
+                    <span className="text-sm font-medium text-foreground">
                       {dev.name}
                     </span>
                   </div>
 
-                  <span className="text-xs text-gray-500">
+                  <span className="text-xs text-muted-foreground">
                     {dev.count} events
                   </span>
                 </div>
@@ -225,8 +215,6 @@ export default function DevFlowAnalytics({ tasks }: { tasks: Task[] }) {
             </div>
           )}
         </ChartCard>
-
-        {/* ACTIVITY */}
 
         <ChartCard title="Recent Activity">
           {activities.length === 0 ? (
@@ -239,14 +227,14 @@ export default function DevFlowAnalytics({ tasks }: { tasks: Task[] }) {
               {activities.slice(0, 10).map((a) => (
                 <div
                   key={a.id}
-                  className="flex items-center justify-between text-sm"
+                  className="flex items-center justify-between text-sm text-foreground"
                 >
                   <div className="flex items-center gap-2">
                     {getActivityIcon(a.type)}
                     {activityLabelMap[a.type] || a.type}
                   </div>
 
-                  <span className="text-xs text-gray-400">
+                  <span className="text-xs text-muted-foreground">
                     {format(new Date(a.createdAt), "MMM d HH:mm")}
                   </span>
                 </div>
@@ -273,17 +261,17 @@ function Metric({
   return (
     <motion.div
       whileHover={{ y: -3 }}
-      className="bg-white border border-gray-200 rounded-xl p-6 flex justify-between items-start shadow-sm hover:shadow-md transition"
+      className="bg-card border border-border rounded-xl p-6 flex justify-between items-start shadow-sm hover:shadow-md transition"
     >
       <div>
-        <p className="text-xs text-gray-500">{title}</p>
+        <p className="text-xs text-muted-foreground">{title}</p>
 
-        <p className="text-3xl font-semibold text-gray-900 mt-1">
+        <p className="text-3xl font-semibold text-foreground mt-1">
           {value ?? "--"}
         </p>
       </div>
 
-      <div className="text-gray-400">{icon}</div>
+      <div className="text-muted-foreground">{icon}</div>
     </motion.div>
   );
 }
@@ -298,8 +286,8 @@ function ChartCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-      <h3 className="text-sm font-semibold text-gray-800 mb-5">{title}</h3>
+    <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
+      <h3 className="text-sm font-semibold text-foreground mb-5">{title}</h3>
 
       {children}
     </div>
@@ -317,9 +305,11 @@ function EmptyState({
 }) {
   return (
     <div className="flex flex-col items-center justify-center h-60 text-center">
-      <p className="text-sm font-medium text-gray-500">{title}</p>
+      <p className="text-sm font-medium text-muted-foreground">{title}</p>
 
-      <p className="text-xs text-gray-400 mt-2 max-w-60">{description}</p>
+      <p className="text-xs text-muted-foreground mt-2 max-w-60">
+        {description}
+      </p>
     </div>
   );
 }

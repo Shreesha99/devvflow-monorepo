@@ -40,13 +40,13 @@ export default function TaskCard({ task }: { task: Task }) {
       <div
         ref={setNodeRef}
         style={style}
-        className={`group relative bg-white mb-3 rounded-lg border border-gray-200
-  hover:border-gray-300 hover:shadow-sm
+        className={`group relative bg-card mb-3 rounded-lg border border-border
+  hover:border-muted hover:shadow-sm
   transition-all duration-200 ease-out
   ${isDragging ? "opacity-40" : ""}`}
       >
         <div className="flex">
-          {/* LEFT SIDE (65%) */}
+          {/* LEFT SIDE */}
           <div className="flex-1 p-3">
             {/* HEADER */}
             <div className="flex items-start gap-2 mb-2">
@@ -56,19 +56,19 @@ export default function TaskCard({ task }: { task: Task }) {
                 {...(!isLocked ? attributes : {})}
                 className={`mt-0.5 ${
                   isLocked
-                    ? "text-gray-300 cursor-not-allowed"
-                    : "text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing"
+                    ? "text-muted cursor-not-allowed"
+                    : "text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing"
                 }`}
               >
                 <GripVertical size={16} />
               </div>
 
               <div className="flex flex-col">
-                <span className="text-xs font-mono text-gray-500">
+                <span className="text-xs font-mono text-muted-foreground">
                   TASK-{task.number ?? task.id}
                 </span>
 
-                <span className="text-sm font-medium text-gray-800">
+                <span className="text-sm font-medium text-foreground">
                   {task.title}
                 </span>
               </div>
@@ -76,7 +76,7 @@ export default function TaskCard({ task }: { task: Task }) {
 
             {/* ACTIVITY PREVIEW */}
             {activities.length > 0 && (
-              <div className="text-xs text-gray-500 space-y-1">
+              <div className="text-xs text-muted-foreground space-y-1">
                 {preview.map((a) => (
                   <ActivityItem key={`${a.id}-${a.createdAt}`} activity={a} />
                 ))}
@@ -85,7 +85,7 @@ export default function TaskCard({ task }: { task: Task }) {
                   <button
                     onPointerDown={(e) => e.stopPropagation()}
                     onClick={() => setExpanded(true)}
-                    className="flex items-center gap-1 text-gray-400 hover:text-gray-600 text-xs mt-1"
+                    className="flex items-center gap-1 text-muted-foreground hover:text-foreground text-xs mt-1"
                   >
                     +{activities.length - 2} more
                     <ChevronDown size={12} />
@@ -95,7 +95,7 @@ export default function TaskCard({ task }: { task: Task }) {
             )}
 
             {expanded && (
-              <div className="mt-2 border-t pt-2 space-y-1 text-xs text-gray-500">
+              <div className="mt-2 border-t border-border pt-2 space-y-1 text-xs text-muted-foreground">
                 {activities.slice(2).map((a) => (
                   <ActivityItem key={a.id} activity={a} />
                 ))}
@@ -103,7 +103,7 @@ export default function TaskCard({ task }: { task: Task }) {
                 <button
                   onPointerDown={(e) => e.stopPropagation()}
                   onClick={() => setExpanded(false)}
-                  className="flex items-center gap-1 text-gray-400 hover:text-gray-600 text-xs mt-1"
+                  className="flex items-center gap-1 text-muted-foreground hover:text-foreground text-xs mt-1"
                 >
                   Show less
                   <ChevronUp size={12} />
@@ -112,14 +112,14 @@ export default function TaskCard({ task }: { task: Task }) {
             )}
           </div>
 
-          {/* RIGHT SIDE (35%) */}
+          {/* RIGHT SIDE */}
           <div
             onClick={() => setShowDetails(true)}
-            className="w-[25%] flex items-center justify-center border-l
+            className="w-[25%] flex items-center justify-center border-l border-border
       cursor-pointer relative
       transition-all
       group-hover:bg-linear-to-l
-      group-hover:from-gray-100/80
+      group-hover:from-muted/80
       group-hover:to-transparent"
           >
             <svg
@@ -132,7 +132,7 @@ export default function TaskCard({ task }: { task: Task }) {
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="text-gray-400 group-hover:text-gray-600 transition"
+              className="text-muted-foreground group-hover:text-foreground transition"
             >
               <path d="M15 3h6v6" />
               <path d="M10 14 21 3" />

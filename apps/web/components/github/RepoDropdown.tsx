@@ -21,6 +21,7 @@ export default function RepoDropdown({
   const [repos, setRepos] = useState<Repo[]>([]);
   const [open, setOpen] = useState(false);
   const [loadingRepos, setLoadingRepos] = useState(true);
+
   useEffect(() => {
     getRepos().then((data) => {
       setRepos(data);
@@ -50,7 +51,7 @@ export default function RepoDropdown({
     <div className="relative">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-2 px-3 py-1.5 border rounded-md bg-gray-50 hover:bg-gray-100 text-sm"
+        className="flex items-center gap-2 px-3 py-1.5 border border-border rounded-md bg-card hover:bg-muted text-sm text-foreground"
       >
         <FolderGit2 size={14} />
         <span className="truncate max-w-50">{currentRepo}</span>
@@ -60,11 +61,11 @@ export default function RepoDropdown({
       {open && (
         <div className="absolute mt-2 w-72 z-50">
           {loadingRepos ? (
-            <div className="bg-white border rounded-lg shadow-lg p-4 space-y-2 animate-pulse">
-              <div className="h-3 bg-gray-200 rounded"></div>
-              <div className="h-3 bg-gray-200 rounded"></div>
-              <div className="h-3 bg-gray-200 rounded"></div>
-              <div className="h-3 bg-gray-200 rounded"></div>
+            <div className="bg-card border border-border rounded-lg shadow-lg p-4 space-y-2 animate-pulse">
+              <div className="h-3 bg-muted rounded"></div>
+              <div className="h-3 bg-muted rounded"></div>
+              <div className="h-3 bg-muted rounded"></div>
+              <div className="h-3 bg-muted rounded"></div>
             </div>
           ) : (
             <SearchDropdown

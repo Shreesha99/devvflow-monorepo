@@ -4,10 +4,8 @@ import { Task } from "@/app/dashboard/page";
 import KanbanColumn from "./KanbanColumn";
 import {
   ClipboardList,
-  PlayCircle,
-  GitPullRequest,
-  CheckCircle,
   Loader2,
+  GitPullRequest,
   CheckCircle2,
 } from "lucide-react";
 
@@ -34,6 +32,7 @@ export default function KanbanBoard({ tasks }: { tasks: Task[] }) {
       },
     })
   );
+
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [boardTasks, setBoardTasks] = useState(tasks);
 
@@ -113,6 +112,7 @@ export default function KanbanBoard({ tasks }: { tasks: Task[] }) {
           tasks={boardTasks.filter((t) => t.status === "DONE")}
         />
       </div>
+
       <DragOverlay>
         {activeTask ? (
           <div className="w-70">

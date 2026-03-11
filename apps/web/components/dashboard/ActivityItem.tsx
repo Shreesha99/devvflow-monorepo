@@ -13,24 +13,24 @@ export default function ActivityItem({ activity }: { activity: Activity }) {
 
     if (isMergeCommit) {
       return (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 text-muted-foreground">
           <GitMerge size={14} className="text-purple-500" />
-          merge commit by <b>{author}</b>
+          merge commit by <b className="text-foreground">{author}</b>
         </div>
       );
     }
 
     return (
-      <div className="flex items-center gap-2">
-        <GitCommit size={14} className="text-gray-400" />
-        commit by <b>{author}</b>
+      <div className="flex items-center gap-2 text-muted-foreground">
+        <GitCommit size={14} className="text-muted-foreground" />
+        commit by <b className="text-foreground">{author}</b>
       </div>
     );
   }
 
   if (activity.type === "pull_request_opened") {
     return (
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 text-muted-foreground">
         <GitPullRequest size={14} className="text-blue-500" />
         PR opened
       </div>
@@ -43,15 +43,15 @@ export default function ActivityItem({ activity }: { activity: Activity }) {
 
     if (message.startsWith("Merge pull request")) {
       return (
-        <div className="flex items-center gap-2">
-          <GitCommit size={14} className="text-gray-400" />
-          merge commit by <b>{author}</b>
+        <div className="flex items-center gap-2 text-muted-foreground">
+          <GitCommit size={14} className="text-muted-foreground" />
+          merge commit by <b className="text-foreground">{author}</b>
         </div>
       );
     }
 
     return (
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 text-muted-foreground">
         <GitMerge size={14} className="text-green-500" />
         PR merged
       </div>

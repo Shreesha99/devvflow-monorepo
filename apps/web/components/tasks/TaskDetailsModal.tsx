@@ -71,22 +71,19 @@ export default function TaskDetailsModal({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-230 max-h-[90vh] bg-white rounded-xl shadow-xl flex flex-col"
+        className="w-230 max-h-[90vh] bg-card border border-border rounded-xl shadow-xl flex flex-col"
       >
         {/* HEADER */}
 
-        {/* HEADER */}
-
-        <div className="flex items-start justify-between px-6 py-4 border-b">
+        <div className="flex items-start justify-between px-6 py-4 border-b border-border">
           <div className="space-y-1">
-            {/* meta row */}
-            <div className="flex items-center gap-3 text-xs text-gray-500">
+            <div className="flex items-center gap-3 text-xs text-muted-foreground">
               <div className="flex items-center gap-2 font-mono">
                 <span>TASK-{task.number ?? task.id}</span>
 
                 <button
                   onClick={copyRef}
-                  className="text-gray-400 hover:text-gray-600"
+                  className="text-muted-foreground hover:text-foreground"
                 >
                   <ClipboardCopy size={14} />
                 </button>
@@ -94,12 +91,12 @@ export default function TaskDetailsModal({
 
               {repoUrl && (
                 <>
-                  <span className="text-gray-300">|</span>
+                  <span className="text-border">|</span>
 
                   <a
                     href={repoUrl}
                     target="_blank"
-                    className="flex items-center gap-1 hover:text-gray-700"
+                    className="flex items-center gap-1 hover:text-foreground"
                   >
                     <Github size={14} />
                     Repository
@@ -108,8 +105,7 @@ export default function TaskDetailsModal({
               )}
             </div>
 
-            {/* title */}
-            <h2 className="text-lg font-semibold text-gray-900">
+            <h2 className="text-lg font-semibold text-foreground">
               {task.title}
             </h2>
           </div>
@@ -119,7 +115,7 @@ export default function TaskDetailsModal({
               e.stopPropagation();
               onClose();
             }}
-            className="text-gray-400 hover:text-gray-600"
+            className="text-muted-foreground hover:text-foreground"
           >
             <X size={18} />
           </button>
@@ -128,13 +124,12 @@ export default function TaskDetailsModal({
         {/* BODY */}
 
         <div className="flex flex-1 overflow-hidden">
-          {/* LEFT SIDE */}
+          {/* LEFT */}
+
           <div className="flex flex-col flex-1 min-w-0">
-            {/* TOP FIXED AREA */}
-            <div className="p-6 space-y-6 border-b">
-              {/* DESCRIPTION */}
+            <div className="p-6 space-y-6 border-b border-border">
               <section className="space-y-2">
-                <h3 className="text-sm font-semibold text-gray-800">
+                <h3 className="text-sm font-semibold text-foreground">
                   Description
                 </h3>
 
@@ -142,12 +137,11 @@ export default function TaskDetailsModal({
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   rows={4}
-                  className="w-full border border-gray-200 rounded-md p-3 text-sm outline-none focus:ring-2 focus:ring-black resize-none"
+                  className="w-full border border-border bg-background rounded-md p-3 text-sm text-foreground outline-none focus:ring-2 focus:ring-primary/30 resize-none"
                 />
               </section>
 
-              {/* TABS */}
-              <div className="flex gap-6 border-b text-sm text-gray-500">
+              <div className="flex gap-6 border-b border-border text-sm text-muted-foreground">
                 <Tab
                   label="Activity"
                   active={tab === "activity"}
@@ -168,12 +162,15 @@ export default function TaskDetailsModal({
               </div>
             </div>
 
-            {/* SCROLLABLE TAB CONTENT */}
+            {/* TAB CONTENT */}
+
             <div className="flex-1 overflow-y-auto overflow-x-hidden p-6 pt-4">
               {tab === "activity" && (
                 <div className="space-y-2">
                   {activities.length === 0 ? (
-                    <p className="text-sm text-gray-400">No activity yet</p>
+                    <p className="text-sm text-muted-foreground">
+                      No activity yet
+                    </p>
                   ) : (
                     activities.map((a) => (
                       <ActivityItem key={a.id} activity={a} />
@@ -185,7 +182,9 @@ export default function TaskDetailsModal({
               {tab === "commits" && (
                 <div className="space-y-3">
                   {commits.length === 0 ? (
-                    <p className="text-sm text-gray-400">No commits linked</p>
+                    <p className="text-sm text-muted-foreground">
+                      No commits linked
+                    </p>
                   ) : (
                     commits.map((c: any) => (
                       <CommitItem key={c.id} commit={c} prs={prs} />
@@ -197,7 +196,9 @@ export default function TaskDetailsModal({
               {tab === "prs" && (
                 <div className="space-y-3">
                   {prs.length === 0 ? (
-                    <p className="text-sm text-gray-400">No PRs linked</p>
+                    <p className="text-sm text-muted-foreground">
+                      No PRs linked
+                    </p>
                   ) : (
                     prs.map((pr: any) => {
                       const status = pr.payload?.status;
@@ -207,7 +208,7 @@ export default function TaskDetailsModal({
                           ? "bg-purple-100 text-purple-700"
                           : status === "open"
                             ? "bg-green-100 text-green-700"
-                            : "bg-gray-100 text-gray-600";
+                            : "bg-muted text-muted-foreground";
 
                       const source = pr.payload?.branch || "feature";
                       const target = "main";
@@ -217,31 +218,34 @@ export default function TaskDetailsModal({
                           key={pr.id}
                           href={pr.payload?.url}
                           target="_blank"
-                          className="group block border rounded-lg p-4 hover:border-gray-300 hover:shadow-sm transition bg-white"
+                          className="group block border border-border rounded-lg p-4 hover:border-muted hover:shadow-sm transition bg-card"
                         >
                           <div className="flex items-start justify-between">
                             <div className="space-y-2 min-w-0">
                               <div className="flex items-center gap-2">
-                                <Github size={14} className="text-gray-400" />
+                                <Github
+                                  size={14}
+                                  className="text-muted-foreground"
+                                />
 
-                                <span className="text-sm font-semibold text-gray-900 group-hover:underline">
+                                <span className="text-sm font-semibold text-foreground group-hover:underline">
                                   {pr.payload?.title}
                                 </span>
                               </div>
 
-                              <div className="flex items-center gap-2 text-xs text-gray-500 font-mono">
-                                <span className="px-2 py-0.5 bg-gray-100 rounded">
+                              <div className="flex items-center gap-2 text-xs text-muted-foreground font-mono">
+                                <span className="px-2 py-0.5 bg-muted rounded">
                                   {source}
                                 </span>
 
                                 <span>→</span>
 
-                                <span className="px-2 py-0.5 bg-gray-100 rounded">
+                                <span className="px-2 py-0.5 bg-muted rounded">
                                   {target}
                                 </span>
                               </div>
 
-                              <div className="text-xs text-gray-400">
+                              <div className="text-xs text-muted-foreground">
                                 Pull request
                               </div>
                             </div>
@@ -262,7 +266,8 @@ export default function TaskDetailsModal({
           </div>
 
           {/* SIDEBAR */}
-          <div className="w-55 border-l p-6 space-y-6">
+
+          <div className="w-55 border-l border-border p-6 space-y-6 bg-background">
             <InfoRow label="Status" value={task.status.replace("_", " ")} />
             <InfoRow label="Commits" value={`${commits.length}`} />
             <InfoRow label="Activity" value={`${activities.length}`} />
@@ -298,13 +303,13 @@ function CommitItem({ commit, prs }: { commit: any; prs: any[] }) {
     prs.find((p) => p.payload?.headSha === commit.payload?.sha);
 
   return (
-    <div className="bg-white rounded-lg shadow-sm">
+    <div className="bg-card border border-border rounded-lg shadow-sm">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full text-left px-3 py-3 hover:bg-gray-50"
+        className="w-full text-left px-3 py-3 hover:bg-muted"
       >
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 text-sm font-medium text-gray-800">
+          <div className="flex items-center gap-2 text-sm font-medium text-foreground">
             {isMergeCommit && (
               <span className="px-2 py-0.5 text-[10px] rounded bg-purple-100 text-purple-700">
                 MERGE
@@ -314,7 +319,7 @@ function CommitItem({ commit, prs }: { commit: any; prs: any[] }) {
             <span>{message}</span>
 
             {shortSha && (
-              <span className="text-gray-400 font-mono text-xs">
+              <span className="text-muted-foreground font-mono text-xs">
                 {shortSha}
               </span>
             )}
@@ -323,13 +328,13 @@ function CommitItem({ commit, prs }: { commit: any; prs: any[] }) {
           {open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
         </div>
 
-        <div className="text-xs text-gray-500 mt-1">
+        <div className="text-xs text-muted-foreground mt-1">
           {commit.payload?.author} •{" "}
           {format(new Date(commit.createdAt), "MMM d HH:mm")}
         </div>
 
         {files.length > 0 && (
-          <div className="text-xs text-gray-400 mt-1">
+          <div className="text-xs text-muted-foreground mt-1">
             {files.length} files changed
           </div>
         )}
@@ -338,7 +343,7 @@ function CommitItem({ commit, prs }: { commit: any; prs: any[] }) {
       <PRStatus pr={pr?.payload} />
 
       {open && files.length > 0 && (
-        <div className="border-t bg-gray-50 text-xs font-mono">
+        <div className="border-t border-border bg-muted text-xs font-mono">
           {files.map((file: any, i: number) => (
             <FileChange key={i} file={file} />
           ))}
@@ -354,28 +359,27 @@ function FileChange({ file }: { file: any }) {
   const lines: string[] = file.patch ? file.patch.split("\n") : [];
 
   return (
-    <div className="border-b last:border-none bg-white">
+    <div className="border-b border-border last:border-none bg-card">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center justify-between w-full px-4 py-2 text-left hover:bg-gray-50 transition"
+        className="flex items-center justify-between w-full px-4 py-2 text-left hover:bg-muted transition"
       >
         <div className="flex items-center gap-3 text-[12px]">
-          <span className="font-medium text-gray-700">{file.path}</span>
+          <span className="font-medium text-foreground">{file.path}</span>
 
           <span className="text-green-600 font-mono">+{file.additions}</span>
           <span className="text-red-600 font-mono">-{file.deletions}</span>
         </div>
 
-        <div className="text-gray-400">
+        <div className="text-muted-foreground">
           {open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
         </div>
       </button>
 
       {open && lines.length > 0 && (
-        <div className="border-t bg-neutral-900 text-[11px] font-mono">
+        <div className="border-t border-border bg-neutral-900 text-[11px] font-mono">
           <div className="max-h-105 overflow-auto">
             <div className="flex min-w-max">
-              {/* line numbers */}
               <div className="bg-neutral-800 text-gray-400 text-right px-3 py-2 select-none">
                 {lines.map((_, i) => (
                   <div key={i} className="leading-5">
@@ -384,7 +388,6 @@ function FileChange({ file }: { file: any }) {
                 ))}
               </div>
 
-              {/* code */}
               <div className="flex-1 py-2">
                 {lines.map((line, i) => {
                   let style = "";
@@ -427,7 +430,9 @@ function Tab({
     <button
       onClick={onClick}
       className={`pb-2 ${
-        active ? "text-black border-b-2 border-black" : "hover:text-gray-700"
+        active
+          ? "text-foreground border-b-2 border-foreground"
+          : "text-muted-foreground hover:text-foreground"
       }`}
     >
       {label}
@@ -438,8 +443,8 @@ function Tab({
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="space-y-1">
-      <div className="text-xs text-gray-400">{label}</div>
-      <div className="text-sm text-gray-800">{value}</div>
+      <div className="text-xs text-muted-foreground">{label}</div>
+      <div className="text-sm text-foreground">{value}</div>
     </div>
   );
 }
@@ -447,7 +452,7 @@ function InfoRow({ label, value }: { label: string; value: string }) {
 function PRStatus({ pr }: { pr?: any }) {
   if (!pr) {
     return (
-      <div className="px-3 py-2 text-xs text-gray-400 flex items-center gap-2">
+      <div className="px-3 py-2 text-xs text-muted-foreground flex items-center gap-2">
         No PR linked
       </div>
     );
@@ -458,7 +463,7 @@ function PRStatus({ pr }: { pr?: any }) {
       ? "bg-purple-100 text-purple-700"
       : pr.status === "open"
         ? "bg-green-100 text-green-700"
-        : "bg-gray-100 text-gray-600";
+        : "bg-muted text-muted-foreground";
 
   return (
     <div className="px-3 py-2 flex items-center gap-3 text-xs">
@@ -466,12 +471,12 @@ function PRStatus({ pr }: { pr?: any }) {
         <a
           href={pr.url}
           target="_blank"
-          className="font-medium text-gray-800 hover:underline"
+          className="font-medium text-foreground hover:underline"
         >
           {pr.title}
         </a>
 
-        <div className="text-gray-500 text-[11px] mt-0.5">
+        <div className="text-muted-foreground text-[11px] mt-0.5">
           {pr.branch || "unknown"} → main
         </div>
       </div>
@@ -479,7 +484,7 @@ function PRStatus({ pr }: { pr?: any }) {
       <span className={`px-2 py-0.5 rounded ${color}`}>{pr.status}</span>
 
       {pr.reviews && (
-        <span className="text-gray-500">{pr.reviews} reviews</span>
+        <span className="text-muted-foreground">{pr.reviews} reviews</span>
       )}
     </div>
   );

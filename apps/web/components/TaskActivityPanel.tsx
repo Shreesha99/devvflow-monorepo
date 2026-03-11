@@ -25,19 +25,18 @@ type ActivityEvent = {
 type Props = {
   taskId: number;
 };
+
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
 export default function TaskActivityPanel({ taskId }: Props) {
   const [activities, setActivities] = useState<Activity[]>([]);
 
-  // Load initial activity
   useEffect(() => {
     axios.get<Activity[]>(`${API}/activity/task/${taskId}`).then((res) => {
       setActivities(res.data);
     });
   }, [taskId]);
 
-  // Listen for realtime updates
   useEffect(() => {
     const handler = (event: ActivityEvent) => {
       if (event.taskId === taskId) {
@@ -53,18 +52,18 @@ export default function TaskActivityPanel({ taskId }: Props) {
   }, [taskId]);
 
   return (
-    <div className="border rounded-lg p-4">
-      <h3 className="font-semibold mb-3">Activity</h3>
+    <div className="border border-border rounded-lg p-4 bg-card">
+      <h3 className="font-semibold mb-3 text-foreground">Activity</h3>
 
       {activities.length === 0 && (
-        <p className="text-sm text-gray-500">No activity yet</p>
+        <p className="text-sm text-muted-foreground">No activity yet</p>
       )}
 
       {activities.map((a) => (
-        <div key={a.id} className="border-b py-2 text-sm">
-          <strong className="text-gray-700">{a.type}</strong>
+        <div key={a.id} className="border-b border-border py-2 text-sm">
+          <strong className="text-foreground">{a.type}</strong>
 
-          <div className="text-xs text-gray-500 mt-1">
+          <div className="text-xs text-muted-foreground mt-1">
             {a.payload.message && <div>Message: {a.payload.message}</div>}
             {a.payload.author && <div>Author: {a.payload.author}</div>}
             {a.payload.title && <div>Title: {a.payload.title}</div>}
@@ -75,7 +74,7 @@ export default function TaskActivityPanel({ taskId }: Props) {
                 <a
                   href={a.payload.url}
                   target="_blank"
-                  className="text-blue-500"
+                  className="text-primary hover:underline"
                 >
                   {a.payload.url}
                 </a>
