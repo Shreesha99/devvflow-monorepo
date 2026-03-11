@@ -6,12 +6,15 @@ import {
   Get,
   Patch,
   Query,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { githubEventsQueue } from '../../queues/github-events.queue';
 import { GithubService } from './github/github.service';
 import { decrypt } from 'src/utils/crypto';
 import axios from 'axios';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('webhooks/github')
 export class GithubController {
@@ -41,14 +44,20 @@ export class GithubController {
   }
 
   @Get('repos')
+  @UseGuards(AuthGuard('jwt'))
   async getRepos(
+    @Req() req,
     @Query('page') page: string = '1',
     @Query('limit') limit: string = '30',
   ) {
     const pageNumber = Number(page);
     const limitNumber = Number(limit);
+
     const integration = await this.prisma.integration.findFirst({
-      where: { type: 'github' },
+      where: {
+        type: 'github',
+        organizationId: req.user.organizationId,
+      },
     });
 
     if (!integration || !integration.config) {
@@ -85,11 +94,15 @@ export class GithubController {
   }
 
   @Patch('connect-repo')
-  async connectRepo(@Body() body: { owner: string; repo: string }) {
+  @UseGuards(AuthGuard('jwt'))
+  async connectRepo(@Req() req, @Body() body: { owner: string; repo: string }) {
     const { owner, repo } = body;
 
     const integration = await this.prisma.integration.findFirst({
-      where: { type: 'github' },
+      where: {
+        type: 'github',
+        organizationId: req.user.organizationId,
+      },
     });
 
     if (!integration || !integration.config) {
@@ -102,7 +115,7 @@ export class GithubController {
       where: {
         githubRepoOwner: owner,
         githubRepoName: repo,
-        organizationId: integration.organizationId,
+        organizationId: req.user.organizationId,
       },
     });
 
@@ -112,12 +125,11 @@ export class GithubController {
           name: repo,
           githubRepoOwner: owner,
           githubRepoName: repo,
-          organizationId: integration.organizationId,
+          organizationId: req.user.organizationId,
         },
       });
     }
 
-    // Create GitHub webhook automatically
     try {
       await axios.post(
         `https://api.github.com/repos/${owner}/${repo}/hooks`,
