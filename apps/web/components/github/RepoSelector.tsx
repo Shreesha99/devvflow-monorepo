@@ -79,11 +79,13 @@ export default function RepoSelector({
     const init = async () => {
       setLoading(true);
       await loadRepos(1);
+      setPage(1);
       setLoading(false);
     };
 
     init();
   }, []);
+
   const lastRepoRef = useCallback(
     (node: HTMLDivElement | null) => {
       if (!hasMore || loadingMore) return;
@@ -91,8 +93,8 @@ export default function RepoSelector({
       if (observer.current) observer.current.disconnect();
       observer.current = new IntersectionObserver(
         async (entries) => {
-          if (!entries[0].isIntersecting) return;
-          if (loadingMore || !hasMore) return;
+          if (!entries[0].isIntersecting || loading || loadingMore || !hasMore)
+            return;
 
           setLoadingMore(true);
 

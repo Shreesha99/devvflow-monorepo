@@ -152,4 +152,32 @@ export class GithubController {
 
     return project;
   }
+
+  @Get('me')
+  async getGithubUser(@Req() req) {
+    const integration = await this.prisma.integration.findFirst({
+      where: {
+        type: 'github',
+        organizationId: req.user.organizationId,
+      },
+    });
+
+    if (!integration || !integration.config) {
+      throw new Error('GitHub not connected');
+    }
+
+    const token = decrypt((integration.config as any).accessToken);
+
+    const res = await axios.get('https://api.github.com/user', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/vnd.github+json',
+      },
+    });
+
+    return {
+      login: res.data.login,
+      avatar_url: res.data.avatar_url,
+    };
+  }
 }

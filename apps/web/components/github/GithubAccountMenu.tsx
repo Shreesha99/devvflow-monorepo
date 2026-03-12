@@ -22,11 +22,14 @@ export default function GithubAccountMenu({
       const token = localStorage.getItem("github_token");
       if (!token) return;
 
-      const res = await fetch("https://api.github.com/user", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/webhooks/github/me`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       const data = await res.json();
       setUser(data);
