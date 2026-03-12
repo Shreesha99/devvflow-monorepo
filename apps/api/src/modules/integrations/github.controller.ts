@@ -6,13 +6,17 @@ import {
   Get,
   Patch,
   Query,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { githubEventsQueue } from '../../queues/github-events.queue';
 import { GithubService } from './github/github.service';
 import { decrypt } from 'src/utils/crypto';
 import axios from 'axios';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { AuthGuard } from '@nestjs/passport';
 
+@UseGuards(AuthGuard('jwt'))
 @Controller('webhooks/github')
 export class GithubController {
   constructor(
@@ -42,13 +46,17 @@ export class GithubController {
 
   @Get('repos')
   async getRepos(
+    @Req() req,
     @Query('page') page: string = '1',
     @Query('limit') limit: string = '30',
   ) {
     const pageNumber = Number(page);
     const limitNumber = Number(limit);
     const integration = await this.prisma.integration.findFirst({
-      where: { type: 'github' },
+      where: {
+        type: 'github',
+        organizationId: req.user.organizationId,
+      },
     });
 
     if (!integration || !integration.config) {
@@ -85,11 +93,14 @@ export class GithubController {
   }
 
   @Patch('connect-repo')
-  async connectRepo(@Body() body: { owner: string; repo: string }) {
+  async connectRepo(@Body() body: { owner: string; repo: string }, @Req() req) {
     const { owner, repo } = body;
 
     const integration = await this.prisma.integration.findFirst({
-      where: { type: 'github' },
+      where: {
+        type: 'github',
+        organizationId: req.user.organizationId,
+      },
     });
 
     if (!integration || !integration.config) {

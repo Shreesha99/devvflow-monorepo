@@ -76,6 +76,14 @@ export default function DashboardPage() {
   }, [view]);
 
   useEffect(() => {
+    const token = localStorage.getItem("github_token");
+
+    if (token) {
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    }
+  }, []);
+
+  useEffect(() => {
     const repo = localStorage.getItem("connected_repo");
     const projectId = localStorage.getItem("connected_project");
     const token = localStorage.getItem("github_token");
@@ -102,21 +110,27 @@ export default function DashboardPage() {
 
           const data = await res.json();
 
-          if (data.token) {
+          if (data?.token) {
             localStorage.setItem("github_token", data.token);
-            setGithubConnected(true);
-          }
 
-          window.history.replaceState({}, "", "/");
-          window.location.href = "/dashboard";
-        } catch (err) {}
+            setGithubConnected(true);
+
+            window.history.replaceState({}, "", "/dashboard");
+            return;
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      const token = localStorage.getItem("github_token");
+
+      if (token) {
+        setGithubConnected(true);
       }
 
       const repo = localStorage.getItem("connected_repo");
       const projectId = localStorage.getItem("connected_project");
-      const storedToken = localStorage.getItem("github_token");
-
-      if (storedToken) setGithubConnected(true);
 
       if (repo && projectId) {
         setRepoConnected(true);

@@ -3,25 +3,33 @@ import { AuthGuard } from '@nestjs/passport';
 import { PrismaService } from '../../prisma/prisma.service';
 import { encrypt } from '../../utils/crypto';
 import { randomUUID } from 'crypto';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private jwt: JwtService,
+  ) {}
 
   @Get('exchange')
   async exchange(@Req() req) {
     const code = req.query.code;
 
     const store = global['oauthTempStore'] || {};
-    const token = store[code];
+    const githubToken = store[code];
 
-    if (!token) {
+    if (!githubToken) {
       return { error: 'Invalid code' };
     }
 
     delete store[code];
 
-    return { token };
+    const jwt = this.jwt.sign({
+      githubToken,
+    });
+
+    return { token: jwt };
   }
 
   @Get('github')
