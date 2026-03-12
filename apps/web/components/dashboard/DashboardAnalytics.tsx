@@ -65,7 +65,12 @@ export default function DevFlowAnalytics({ tasks }: { tasks: Task[] }) {
     { name: "Done", value: status.done },
   ];
 
-  const COLORS = ["#e5e7eb", "#3b82f6", "#f59e0b", "#10b981"];
+  const COLORS = [
+    "var(--muted-foreground)",
+    "var(--primary)",
+    "#f59e0b",
+    "#10b981",
+  ];
 
   const last7Days = Array.from({ length: 7 }).map((_, i) =>
     format(subDays(new Date(), 6 - i), "MMM d")
@@ -161,16 +166,34 @@ export default function DevFlowAnalytics({ tasks }: { tasks: Task[] }) {
           ) : (
             <ResponsiveContainer width="100%" height={260}>
               <LineChart data={velocity}>
-                <XAxis dataKey="day" />
+                <XAxis
+                  dataKey="day"
+                  tick={{ fill: "var(--muted-foreground)", fontSize: 12 }}
+                  axisLine={{ stroke: "var(--border)" }}
+                  tickLine={false}
+                />
 
-                <YAxis allowDecimals={false} />
+                <YAxis
+                  allowDecimals={false}
+                  tick={{ fill: "var(--muted-foreground)", fontSize: 12 }}
+                  axisLine={{ stroke: "var(--border)" }}
+                  tickLine={false}
+                />
 
-                <Tooltip />
+                <Tooltip
+                  contentStyle={{
+                    background: "var(--card)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "8px",
+                    fontSize: "12px",
+                  }}
+                  labelStyle={{ color: "hsl(var(--foreground))" }}
+                />
 
                 <Line
                   type="monotone"
                   dataKey="tasks"
-                  stroke="#111827"
+                  stroke="var(--primary)"
                   strokeWidth={3}
                   dot={{ r: 5 }}
                   activeDot={{ r: 6 }}
@@ -223,7 +246,7 @@ export default function DevFlowAnalytics({ tasks }: { tasks: Task[] }) {
               description="Commits and PR activity will appear here."
             />
           ) : (
-            <div className="space-y-4 max-h-65 overflow-y-auto pr-2">
+            <div className="space-y-4 max-h-65 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-muted">
               {activities.slice(0, 10).map((a) => (
                 <div
                   key={a.id}
@@ -261,7 +284,7 @@ function Metric({
   return (
     <motion.div
       whileHover={{ y: -3 }}
-      className="bg-card border border-border rounded-xl p-6 flex justify-between items-start shadow-sm hover:shadow-md transition"
+      className="bg-card border border-border rounded-xl p-6 flex justify-between items-start shadow-sm hover:bg-muted/40 hover:shadow-md transition"
     >
       <div>
         <p className="text-xs text-muted-foreground">{title}</p>
@@ -271,7 +294,7 @@ function Metric({
         </p>
       </div>
 
-      <div className="text-muted-foreground">{icon}</div>
+      <div className="text-muted-foreground opacity-80">{icon}</div>
     </motion.div>
   );
 }

@@ -19,6 +19,10 @@ export const metadata: Metadata = {
   title: "DevvDeck",
   description:
     "DevvDeck is a task management tool that integrates with GitHub Projects to help developers manage their tasks and projects more efficiently.",
+  icons: {
+    icon: "/Logo.svg",
+    shortcut: "/Logo.svg",
+  },
 };
 
 export default function RootLayout({

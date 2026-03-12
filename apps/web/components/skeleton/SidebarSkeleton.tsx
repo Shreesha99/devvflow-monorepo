@@ -8,7 +8,7 @@ export default function SidebarSkeleton({
   return (
     <div
       className={`bg-card border-r border-border flex flex-col animate-pulse
-      ${collapsed ? "w-16" : "w-64"} h-[calc(100vh-64px)]`}
+      ${collapsed ? "w-16" : "w-64"} h-[calc(100vh-56px)]`}
     >
       {/* toggle button placeholder */}
 

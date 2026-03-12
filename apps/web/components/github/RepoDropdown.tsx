@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getRepos, connectRepo } from "@/lib/github";
-import { ChevronDown, FolderGit2 } from "lucide-react";
+import { ChevronDown, FolderGit2, Loader2 } from "lucide-react";
 import SearchDropdown from "../ui/SearchDropdown";
 
 type Repo = {
@@ -21,6 +21,7 @@ export default function RepoDropdown({
   const [repos, setRepos] = useState<Repo[]>([]);
   const [open, setOpen] = useState(false);
   const [loadingRepos, setLoadingRepos] = useState(true);
+  const [switchingRepo, setSwitchingRepo] = useState(false);
 
   useEffect(() => {
     getRepos().then((data) => {
@@ -39,16 +40,23 @@ export default function RepoDropdown({
       return;
     }
 
+    setOpen(false);
+    setSwitchingRepo(true);
+
     const [owner, name] = repo.fullName.split("/");
 
-    const project = await connectRepo(owner, name);
+    try {
+      const project = await connectRepo(owner, name);
 
-    localStorage.setItem("connected_repo", repo.fullName);
-    localStorage.setItem("connected_project", project.id);
+      localStorage.setItem("connected_repo", repo.fullName);
+      localStorage.setItem("connected_project", project.id);
 
-    onRepoChange(project.id, repo.fullName);
-
-    setOpen(false);
+      onRepoChange(project.id, repo.fullName);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSwitchingRepo(false);
+    }
   };
 
   return (
@@ -57,9 +65,17 @@ export default function RepoDropdown({
         onClick={() => setOpen((o) => !o)}
         className="flex items-center gap-2 px-3 py-1.5 border border-border rounded-md bg-card hover:bg-muted text-sm text-foreground"
       >
-        <FolderGit2 size={14} />
-        <span className="truncate max-w-50">{currentRepo}</span>
-        <ChevronDown size={14} />
+        {switchingRepo ? (
+          <Loader2 size={14} className="animate-spin" />
+        ) : (
+          <FolderGit2 size={14} />
+        )}
+
+        <span className="truncate max-w-50">
+          {switchingRepo ? "Switching repo..." : currentRepo}
+        </span>
+
+        {!switchingRepo && <ChevronDown size={14} />}
       </button>
 
       {open && (

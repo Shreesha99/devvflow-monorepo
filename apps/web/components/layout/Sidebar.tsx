@@ -25,7 +25,7 @@ export default function Sidebar({
   return (
     <div
       className={`bg-card border-r border-border transition-all duration-300 flex flex-col
-      ${collapsed ? "w-16" : "w-64"} h-[calc(100vh-64px)]`}
+      ${collapsed ? "w-16" : "w-64"} h-[calc(100vh-56px)]`}
     >
       <div className="p-3 flex justify-end">
         <button
@@ -92,7 +92,7 @@ function SidebarItem({
       className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition w-full text-left
       ${
         active
-          ? "bg-primary text-primary-foreground"
+          ? "bg-muted text-foreground"
           : "text-muted-foreground hover:bg-muted hover:text-foreground"
       }`}
     >

@@ -83,7 +83,7 @@ export default function KanbanBoard({ tasks }: { tasks: Task[] }) {
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="p-10 grid grid-cols-4 gap-6">
+      <div className="mt-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
         <KanbanColumn
           id="BACKLOG"
           title="BACKLOG"

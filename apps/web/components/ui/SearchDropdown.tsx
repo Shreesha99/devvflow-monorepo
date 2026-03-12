@@ -49,28 +49,30 @@ export default function SearchDropdown({
   return (
     <div
       ref={containerRef}
-      className="w-full max-h-80 bg-white border rounded-lg shadow-lg overflow-y-auto overflow-x-hidden"
+      className="w-full max-h-80 bg-card border border-border rounded-lg shadow-lg overflow-y-auto overflow-x-hidden"
     >
-      <div className="sticky top-0 bg-white border-b p-2">
+      <div className="sticky top-0 bg-card border-b border-border p-2">
         <input
           placeholder={placeholder}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleKeyDown}
-          className="w-full text-sm outline-none px-2 py-1"
+          className="w-full text-sm outline-none px-2 py-1 bg-transparent text-foreground placeholder:text-muted-foreground"
         />
       </div>
 
       {filtered.length === 0 && (
-        <div className="p-4 text-sm text-gray-500">No results</div>
+        <div className="p-4 text-sm text-muted-foreground">No results</div>
       )}
 
       {filtered.map((item, index) => (
         <button
           key={item.id}
           onClick={() => onSelect(item)}
-          className={`w-full text-left px-3 py-2 text-sm flex items-center gap-2 truncate ${
-            index === selectedIndex ? "bg-gray-100" : "hover:bg-gray-50"
+          className={`w-full text-left px-3 py-2 text-sm flex items-center gap-2 truncate transition-colors ${
+            index === selectedIndex
+              ? "bg-muted text-foreground"
+              : "hover:bg-muted text-foreground"
           }`}
         >
           {item.label}

@@ -259,7 +259,7 @@ export default function DashboardPage() {
           />
         )}
 
-        <div className="flex-1 p-8 overflow-y-auto">
+        <div className="flex-1 px-6 py-5 overflow-y-auto">
           {!githubConnected && (
             <div className="flex items-center justify-center h-[70vh]">
               <GithubConnectButton />
@@ -279,7 +279,7 @@ export default function DashboardPage() {
           )}
 
           {repoConnected && view === "kanban" && (
-            <div className="flex items-center justify-between px-4">
+            <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-foreground">
                 {currentRepo}
               </h2>
